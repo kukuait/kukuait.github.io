@@ -400,6 +400,19 @@
           "description": "Metrics、logging、tracing、告警設計",
           "sections": [
             {
+              "id": "signal-design",
+              "title": "訊號設計",
+              "notes": [
+                {
+                  "id": "log-vs-metric-signal-design",
+                  "title": "Log 與 Metric 的職責劃分：以 GCP 結構化日誌為例",
+                  "file": "sre/02-observability/log-vs-metric-signal-design.mdx",
+                  "date": "2026-07-13",
+                  "tags": ["observability", "log", "metric", "log-based-alert", "opentelemetry", "cardinality", "red-method", "gcp", "cloud-monitoring", "signal-design"]
+                }
+              ]
+            },
+            {
               "id": "metrics-monitoring",
               "title": "指標監控",
               "notes": [
