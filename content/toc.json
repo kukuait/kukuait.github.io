@@ -400,33 +400,6 @@
           "description": "Metrics、logging、tracing、告警設計",
           "sections": [
             {
-              "id": "opentelemetry",
-              "title": "OpenTelemetry",
-              "notes": [
-                {
-                  "id": "what-is-opentelemetry",
-                  "title": "OpenTelemetry 的功能與應用",
-                  "file": "sre/02-observability/what-is-opentelemetry.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["opentelemetry", "otel", "tracing", "metrics", "logging", "observability", "otlp", "context-propagation", "semantic-conventions", "sampling"]
-                },
-                {
-                  "id": "otel-gcp-gke-case-study",
-                  "title": "OpenTelemetry 在 GKE + GCP 上的實踐案例",
-                  "file": "sre/02-observability/otel-gcp-gke-case-study.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["opentelemetry", "otel", "gke", "gcp", "cloud-trace", "cloud-logging", "cloud-monitoring", "managed-prometheus", "workload-identity", "trace-explorer", "logs-explorer", "metrics-explorer", "case-study"]
-                },
-                {
-                  "id": "otel-metrics-api-fastapi",
-                  "title": "OpenTelemetry 的 Metrics API 與其他 API 總覽（以 FastAPI 為例）",
-                  "file": "sre/02-observability/otel-metrics-api-fastapi.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["opentelemetry", "otel", "metrics-api", "meter", "counter", "histogram", "observable-gauge", "fastapi", "instrumentation", "tracer-api", "propagator-api"]
-                }
-              ]
-            },
-            {
               "id": "metrics-monitoring",
               "title": "指標監控",
               "notes": [
@@ -438,40 +411,6 @@
                   "tags": ["prometheus", "grafana", "metrics", "promql", "alertmanager", "tsdb", "observability", "dashboard", "pull-model", "service-discovery"]
                 }
               ]
-            },
-            {
-              "id": "gcp-tools",
-              "title": "GCP 可觀測性工具",
-              "notes": [
-                {
-                  "id": "gcp-cloud-observability-overview",
-                  "title": "GCP Cloud Observability 套件總覽",
-                  "file": "sre/02-observability/gcp-cloud-observability-overview.mdx",
-                  "date": "2026-07-11",
-                  "tags": ["gcp", "cloud-observability", "cloud-logging", "cloud-monitoring", "cloud-trace", "cloud-profiler", "error-reporting", "ops-agent", "monitored-resource", "observability", "overview"]
-                },
-                {
-                  "id": "gcp-logs-trace-metrics-error-reporting",
-                  "title": "GCP Logs Explorer、Trace Explorer、Metrics Explorer 與 Error Reporting 的關係",
-                  "file": "sre/02-observability/gcp-logs-trace-metrics-error-reporting.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["gcp", "cloud-logging", "logs-explorer", "cloud-trace", "trace-explorer", "cloud-monitoring", "metrics-explorer", "error-reporting", "observability", "monitored-resource", "alerting-policy", "log-based-metrics", "notification"]
-                },
-                {
-                  "id": "gcp-monitoring-dashboard",
-                  "title": "Cloud Monitoring Dashboard 與 Metrics Explorer 的關係",
-                  "file": "sre/02-observability/gcp-monitoring-dashboard.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["gcp", "cloud-monitoring", "dashboard", "metrics-explorer", "widget", "alerting-policy", "dashboard-as-code", "observability"]
-                },
-                {
-                  "id": "gcp-uptime-checks-and-alerting",
-                  "title": "GCP Cloud Monitoring 的 Uptime Checks 與 Alerting 功能",
-                  "file": "sre/02-observability/gcp-uptime-checks-and-alerting.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["gcp", "cloud-monitoring", "uptime-check", "alerting-policy", "notification-channel", "black-box-monitoring", "incident", "slo", "observability"]
-                }
-              ]
             }
           ]
         },
@@ -479,53 +418,127 @@
           "id": "03-operations",
           "title": "維運實務",
           "description": "部署、放量、回滾、容量規劃",
-          "sections": [
-            {
-              "id": "resource-management",
-              "title": "資源管理（Requests / Limits）",
-              "notes": [
-                {
-                  "id": "gke-pod-memory-without-limit",
-                  "title": "GKE Pod 記憶體管理：Request 與 Limit 的實際運作",
-                  "file": "sre/03-operations/gke-pod-memory-without-limit.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["gke", "kubernetes", "memory", "requests", "limits", "qos-class", "oom-killer", "cgroup", "capacity-planning"]
-                }
-              ]
-            },
-            {
-              "id": "networking",
-              "title": "網路架構",
-              "notes": [
-                {
-                  "id": "gcp-vpc-network",
-                  "title": "GCP VPC Network 的架構與核心概念",
-                  "file": "sre/03-operations/gcp-vpc-network.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["gcp", "vpc", "subnet", "firewall-rules", "routes", "vpc-peering", "shared-vpc", "private-service-connect", "cloud-nat", "cloud-interconnect", "networking"]
-                }
-              ]
-            },
-            {
-              "id": "scheduling",
-              "title": "排程",
-              "notes": [
-                {
-                  "id": "k8s-cronjob-vs-cloud-scheduler",
-                  "title": "Kubernetes CronJob 與 GCP Cloud Scheduler 的差異與選型",
-                  "file": "sre/03-operations/k8s-cronjob-vs-cloud-scheduler.mdx",
-                  "date": "2026-07-13",
-                  "tags": ["kubernetes", "cronjob", "gcp", "cloud-scheduler", "scheduling", "pub-sub", "cloud-run", "job", "concurrency-policy", "dead-mans-switch", "idempotency", "reliability", "kube-state-metrics"]
-                }
-              ]
-            }
-          ]
+          "sections": []
         },
         {
           "id": "04-incident",
           "title": "事故處理",
           "description": "On-call、事故分級、postmortem",
           "sections": []
+        },
+        {
+          "id": "05-gcp",
+          "title": "Google Cloud Platform",
+          "description": "GCP 核心服務：Cloud Observability、VPC 網路、GKE 工作負載與排程",
+          "sections": [
+            {
+              "id": "cloud-observability",
+              "title": "Cloud Observability",
+              "notes": [
+                {
+                  "id": "gcp-cloud-observability-overview",
+                  "title": "GCP Cloud Observability 套件總覽",
+                  "file": "sre/05-gcp/gcp-cloud-observability-overview.mdx",
+                  "date": "2026-07-11",
+                  "tags": ["gcp", "cloud-observability", "cloud-logging", "cloud-monitoring", "cloud-trace", "cloud-profiler", "error-reporting", "ops-agent", "monitored-resource", "observability", "overview"]
+                },
+                {
+                  "id": "gcp-logs-trace-metrics-error-reporting",
+                  "title": "GCP Logs Explorer、Trace Explorer、Metrics Explorer 與 Error Reporting 的關係",
+                  "file": "sre/05-gcp/gcp-logs-trace-metrics-error-reporting.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gcp", "cloud-logging", "logs-explorer", "cloud-trace", "trace-explorer", "cloud-monitoring", "metrics-explorer", "error-reporting", "observability", "monitored-resource", "alerting-policy", "log-based-metrics", "notification"]
+                },
+                {
+                  "id": "gcp-monitoring-dashboard",
+                  "title": "Cloud Monitoring Dashboard 與 Metrics Explorer 的關係",
+                  "file": "sre/05-gcp/gcp-monitoring-dashboard.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gcp", "cloud-monitoring", "dashboard", "metrics-explorer", "widget", "alerting-policy", "dashboard-as-code", "observability"]
+                },
+                {
+                  "id": "gcp-uptime-checks-and-alerting",
+                  "title": "GCP Cloud Monitoring 的 Uptime Checks 與 Alerting 功能",
+                  "file": "sre/05-gcp/gcp-uptime-checks-and-alerting.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gcp", "cloud-monitoring", "uptime-check", "alerting-policy", "notification-channel", "black-box-monitoring", "incident", "slo", "observability"]
+                },
+                {
+                  "id": "otel-gcp-gke-case-study",
+                  "title": "OpenTelemetry 在 GKE + GCP 上的實踐案例",
+                  "file": "sre/05-gcp/otel-gcp-gke-case-study.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gcp", "gke", "opentelemetry", "otel", "cloud-trace", "cloud-logging", "cloud-monitoring", "managed-prometheus", "workload-identity", "trace-explorer", "logs-explorer", "metrics-explorer", "case-study"]
+                }
+              ]
+            },
+            {
+              "id": "networking",
+              "title": "VPC 網路",
+              "notes": [
+                {
+                  "id": "gcp-vpc-network",
+                  "title": "GCP VPC Network 的架構與核心概念",
+                  "file": "sre/05-gcp/gcp-vpc-network.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gcp", "vpc", "subnet", "firewall-rules", "routes", "vpc-peering", "shared-vpc", "private-service-connect", "cloud-nat", "cloud-interconnect", "networking"]
+                }
+              ]
+            },
+            {
+              "id": "gke-workloads",
+              "title": "GKE 工作負載",
+              "notes": [
+                {
+                  "id": "gke-pod-memory-without-limit",
+                  "title": "GKE Pod 記憶體管理：Request 與 Limit 的實際運作",
+                  "file": "sre/05-gcp/gke-pod-memory-without-limit.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gke", "gcp", "kubernetes", "memory", "requests", "limits", "qos-class", "oom-killer", "cgroup", "capacity-planning"]
+                },
+                {
+                  "id": "k8s-cronjob-vs-cloud-scheduler",
+                  "title": "Kubernetes CronJob 與 GCP Cloud Scheduler 的差異與選型",
+                  "file": "sre/05-gcp/k8s-cronjob-vs-cloud-scheduler.mdx",
+                  "date": "2026-07-13",
+                  "tags": ["gcp", "gke", "cloud-scheduler", "kubernetes", "cronjob", "scheduling", "pub-sub", "cloud-run", "concurrency-policy", "dead-mans-switch", "idempotency", "reliability"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "06-opentelemetry",
+          "title": "OpenTelemetry",
+          "description": "OTel API/SDK、三支柱（Traces、Metrics、Logs）原理與實務埋點",
+          "sections": [
+            {
+              "id": "core",
+              "title": "核心概念",
+              "notes": [
+                {
+                  "id": "what-is-opentelemetry",
+                  "title": "OpenTelemetry 的功能與應用",
+                  "file": "sre/06-opentelemetry/what-is-opentelemetry.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["opentelemetry", "otel", "tracing", "metrics", "logging", "observability", "otlp", "context-propagation", "semantic-conventions", "sampling"]
+                }
+              ]
+            },
+            {
+              "id": "instrumentation",
+              "title": "埋點實務",
+              "notes": [
+                {
+                  "id": "otel-metrics-api-fastapi",
+                  "title": "OpenTelemetry 的 Metrics API 與其他 API 總覽（以 FastAPI 為例）",
+                  "file": "sre/06-opentelemetry/otel-metrics-api-fastapi.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["opentelemetry", "otel", "metrics-api", "meter", "counter", "histogram", "observable-gauge", "fastapi", "instrumentation", "tracer-api", "propagator-api"]
+                }
+              ]
+            }
+          ]
         }
       ]
     }

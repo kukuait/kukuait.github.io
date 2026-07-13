@@ -80,7 +80,7 @@ Grafana 的核心賣點是把任意資料源的查詢結果組成可互動的儀
 
 ### 3.2 資料源無關（Multi-data-source）
 
-一張 Dashboard 上的不同面板可以分別接不同的資料源——例如同時顯示 Prometheus 的 QPS 曲線、Loki 的錯誤日誌、Tempo 的分布式追蹤——這正是可觀測性三支柱（metrics/logs/traces）在同一個畫面關聯分析（correlation）的常見做法，可以參考 [OpenTelemetry 的功能與應用](#/sre/02-observability/what-is-opentelemetry.mdx) 了解這三者如何統一收集。
+一張 Dashboard 上的不同面板可以分別接不同的資料源——例如同時顯示 Prometheus 的 QPS 曲線、Loki 的錯誤日誌、Tempo 的分布式追蹤——這正是可觀測性三支柱（metrics/logs/traces）在同一個畫面關聯分析（correlation）的常見做法，可以參考 [OpenTelemetry 的功能與應用](#/sre/06-opentelemetry/what-is-opentelemetry.mdx) 了解這三者如何統一收集。
 
 ### 3.3 Explore：即時查詢介面
 
@@ -129,10 +129,9 @@ flowchart LR
 原生 Prometheus 是單機架構，規模大了之後會遇到兩個典型問題，值得知道對應解法（不展開細節）：
 
 - **長期儲存與跨叢集查詢**：本機 TSDB 沒有內建的高可用與長期保存能力，常見解法是 Thanos 或 Cortex/Mimir，把多個 Prometheus 實例的資料匯聚到物件儲存（如 S3/GCS），提供全域查詢視圖。
-- **雲端 Managed 版本**：例如 GCP 的 Managed Service for Prometheus，把 scrape 與儲存交給雲端服務代管，只留 PromQL 相容介面給使用者，可參考 [OpenTelemetry 在 GKE + GCP 上的實踐案例](#/sre/02-observability/otel-gcp-gke-case-study.mdx)。
+- **雲端 Managed 版本**：例如 GCP 的 Managed Service for Prometheus，把 scrape 與儲存交給雲端服務代管，只留 PromQL 相容介面給使用者，可參考 [OpenTelemetry 在 GKE + GCP 上的實踐案例](#/sre/05-gcp/otel-gcp-gke-case-study.mdx)。
 
 ## 相關筆記
 
-- [OpenTelemetry 的功能與應用](#/sre/02-observability/what-is-opentelemetry.mdx)
-- [OpenTelemetry 在 GKE + GCP 上的實踐案例](#/sre/02-observability/otel-gcp-gke-case-study.mdx)
-- [GKE Pod 記憶體管理：Request 與 Limit 的實際運作](#/sre/03-operations/gke-pod-memory-without-limit.mdx)
+- [OpenTelemetry 的功能與應用](#/sre/06-opentelemetry/what-is-opentelemetry.mdx)
+- [OpenTelemetry 在 GKE + GCP 上的實踐案例](#/sre/05-gcp/otel-gcp-gke-case-study.mdx)
