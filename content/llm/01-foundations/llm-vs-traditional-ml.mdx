@@ -1,0 +1,53 @@
+# LLM 與傳統機器學習的本質差異
+
+> 一句話版本：傳統 ML 是「一個任務訓練一個專用模型」，LLM 是「一個通用模型透過 prompt 適應無數任務」——這個範式轉移（paradigm shift）才是最核心的差異，其他差異多半是它的衍生結果。
+
+## Step 1 — 先對齊詞彙：LLM 其實也是 ML
+
+LLM（Large Language Model）在技術上**就是** machine learning 的一種：它是 deep learning 裡的 Transformer 架構，用海量文字訓練。所以這裡比較的對象是：
+
+- **傳統 ML**:logistic regression、decision tree、XGBoost、SVM，以及小型專用神經網路（如 CNN 影像分類器）
+- **LLM**:GPT、Claude、Llama 這類數十億到數兆參數的大型語言模型
+
+## Step 2 — 核心差異：任務專用 vs 通用
+
+**傳統 ML 的工作模式**：每個任務都要走一次完整流程 —— 收集標註資料 → feature engineering → 訓練 → 部署。要做垃圾郵件分類就訓練一個分類器；要做情感分析就再訓練另一個。模型訓練完，能力就固定在那一個任務上。
+
+**LLM 的工作模式**：先在海量文本上做 pretraining 學到通用的語言與世界知識，之後**同一個模型**靠 prompt 就能切換任務 —— 翻譯、摘要、寫程式、分類都不用重新訓練。這叫 **in-context learning**：在 prompt 裡給幾個範例（few-shot）甚至不給範例（zero-shot），模型就能執行新任務。
+
+工程師的比喻：傳統 ML 像是為每個需求寫一個專用函式；LLM 像是一個接受自然語言指令的通用直譯器。
+
+## Step 3 — 逐維度比較
+
+| 維度 | 傳統 ML | LLM |
+|---|---|---|
+| 輸入特徵 | 需要人工 feature engineering（挑欄位、做轉換） | 直接吃原始文字，特徵是模型自己學的 |
+| 訓練資料 | 千~百萬筆**有標註**的任務專屬資料 | 數兆 token 的**無標註**文本（self-supervised） |
+| 參數量 | 數千 ~ 數百萬 | 數十億 ~ 數兆 |
+| 適應新任務 | 重新收資料、重新訓練 | 改 prompt 即可（必要時才 fine-tune） |
+| 輸出形式 | 固定 schema（一個類別、一個數值） | 開放式文字生成（自然語言、程式碼、JSON…） |
+| 可解釋性 | 較高（樹模型可看 feature importance） | 很低，是黑盒子 |
+| 推理成本 | 極低，毫秒級、CPU 可跑 | 高，需要 GPU，逐 token 生成有延遲 |
+| 確定性 | 同輸入同輸出（多數模型） | 有隨機性（sampling temperature），且會 **hallucination** |
+
+## Step 4 — 為什麼會有這個轉變？Scaling laws
+
+關鍵發現是 **scaling laws**：模型參數、資料量、算力一起放大時，模型能力會可預測地持續提升，而且到某個規模後會「湧現」（emergent abilities）出小模型完全沒有的能力 —— 例如 few-shot learning、多步推理。「大」本身成了質變的來源，而不只是量變。
+
+## Step 5 — 工程實務：什麼時候該用哪個？
+
+不是 LLM 出來後傳統 ML 就過時了，選型考量：
+
+- **用傳統 ML**：結構化資料（表格）、需要低延遲低成本、需要可解釋性（金融風控、醫療）、任務定義明確且有標註資料。信用卡詐欺偵測用 XGBoost 至今仍是業界主流，又快又準又便宜。
+- **用 LLM**：非結構化文字/多模態輸入、任務多變或難以事先定義、需要生成能力（寫作、對話、程式碼）、標註資料稀缺。
+- **混合**：用 LLM 做前處理（抽取、標註資料）再餵給傳統 ML，或用小模型做路由、LLM 處理長尾。
+
+## 相關概念延伸
+
+- 傳統 ML 的「訓練」對應到 LLM 世界拆成了 **pretraining**（學通用知識）和 **post-training**（SFT、RLHF，學跟隨指令），這是另一個結構性差異。
+- LLM 的 fine-tuning（如 LoRA）可視為兩個世界的橋樑：拿通用模型再做少量任務專屬訓練。
+
+## 相關筆記
+
+- [LLM 是如何運作的？](#/llm/01-foundations/how-do-llms-work.mdx)
+- [什麼是 Transformer?](#/llm/01-foundations/what-is-transformer.mdx)

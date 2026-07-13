@@ -1,0 +1,533 @@
+{
+  "domains": [
+    {
+      "id": "llm",
+      "title": "LLM",
+      "description": "大型語言模型：原理、訓練、推理、應用開發",
+      "chapters": [
+        {
+          "id": "01-foundations",
+          "title": "基礎概念",
+          "description": "Transformer、attention、tokenization、embedding 等核心原理",
+          "sections": [
+            {
+              "id": "overview",
+              "title": "總覽",
+              "notes": [
+                {
+                  "id": "how-do-llms-work",
+                  "title": "LLM 的運作原理",
+                  "file": "llm/01-foundations/how-do-llms-work.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["overview", "tokenization", "autoregressive", "pretraining"]
+                },
+                {
+                  "id": "llm-vs-traditional-ml",
+                  "title": "LLM 與傳統機器學習的本質差異",
+                  "file": "llm/01-foundations/llm-vs-traditional-ml.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["overview", "machine-learning", "in-context-learning", "scaling-laws"]
+                },
+                {
+                  "id": "why-one-model-many-tasks",
+                  "title": "統一模型執行多項任務的能力",
+                  "file": "llm/01-foundations/why-one-model-many-tasks.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["overview", "text-to-text", "in-context-learning", "instruction-tuning", "multitask"]
+                }
+              ]
+            },
+            {
+              "id": "tokenization",
+              "title": "Tokenization",
+              "notes": [
+                {
+                  "id": "what-is-a-token-and-api-pricing",
+                  "title": "Token 與 API 計費模型",
+                  "file": "llm/01-foundations/what-is-a-token-and-api-pricing.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["token", "tokenization", "bpe", "pricing", "prompt-caching", "batch-api"]
+                }
+              ]
+            },
+            {
+              "id": "architecture",
+              "title": "模型架構",
+              "notes": [
+                {
+                  "id": "what-is-transformer",
+                  "title": "Transformer 架構與注意力機制",
+                  "file": "llm/01-foundations/what-is-transformer.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["transformer", "attention"]
+                }
+              ]
+            },
+            {
+              "id": "context",
+              "title": "Context 與記憶",
+              "notes": [
+                {
+                  "id": "what-is-context-window",
+                  "title": "Context Window 與模型記憶容量",
+                  "file": "llm/01-foundations/what-is-context-window.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["context-window", "attention", "kv-cache", "compaction", "long-context"]
+                },
+                {
+                  "id": "do-llms-have-memory",
+                  "title": "LLM 的無狀態性與記憶策略",
+                  "file": "llm/01-foundations/do-llms-have-memory.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["memory", "stateless", "context-window", "rag", "fine-tuning", "memory-tool"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "02-training",
+          "title": "訓練方法",
+          "description": "Pretraining、SFT、RLHF/DPO、scaling laws",
+          "sections": [
+            {
+              "id": "overview",
+              "title": "總覽",
+              "notes": [
+                {
+                  "id": "pretraining-vs-finetuning",
+                  "title": "預訓練與微調：模型改進的完整路徑",
+                  "file": "llm/02-training/pretraining-vs-finetuning.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["pretraining", "fine-tuning", "sft", "rlhf", "dpo", "lora", "rag"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "03-inference",
+          "title": "推理與優化",
+          "description": "KV cache、quantization、speculative decoding、serving",
+          "sections": [
+            {
+              "id": "sampling",
+              "title": "取樣與參數",
+              "notes": [
+                {
+                  "id": "temperature-and-top-p",
+                  "title": "Temperature 與 Top-p 的取樣策略",
+                  "file": "llm/03-inference/temperature-and-top-p.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["temperature", "top-p", "top-k", "sampling", "nucleus-sampling", "inference"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "04-applications",
+          "title": "應用開發",
+          "description": "Prompt engineering、RAG、agent、tool use、MCP",
+          "sections": [
+            {
+              "id": "prompting",
+              "title": "Prompting",
+              "notes": [
+                {
+                  "id": "icl-and-prompt-engineering",
+                  "title": "In-Context Learning 與 Prompt Engineering",
+                  "file": "llm/04-applications/icl-and-prompt-engineering.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["in-context-learning", "prompt-engineering", "few-shot", "chain-of-thought", "context-engineering"]
+                },
+                {
+                  "id": "prompting-styles",
+                  "title": "零樣本、少樣本與指令提示的區別",
+                  "file": "llm/04-applications/prompting-styles.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["zero-shot", "few-shot", "instruction-prompting", "icl", "prompt-engineering"]
+                },
+                {
+                  "id": "few-shot-example-selection",
+                  "title": "Few-shot 範例選擇的最佳實踐",
+                  "file": "llm/04-applications/few-shot-example-selection.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["few-shot", "icl", "label-coverage", "recency-bias", "prompt-engineering"]
+                },
+                {
+                  "id": "chain-of-thought",
+                  "title": "Chain-of-Thought 與多步推理",
+                  "file": "llm/04-applications/chain-of-thought.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["chain-of-thought", "cot", "reasoning", "zero-shot-cot", "few-shot-cot", "prompt-engineering", "emergent-ability"]
+                },
+                {
+                  "id": "constraint-design",
+                  "title": "約束設計：穩定化 LLM 輸出",
+                  "file": "llm/04-applications/constraint-design.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["constraint", "prompt-engineering", "output-format", "hallucination", "reliability"]
+                }
+              ]
+            },
+            {
+              "id": "api",
+              "title": "API 基礎",
+              "notes": [
+                {
+                  "id": "llm-api-response-structure",
+                  "title": "LLM API 回應的結構與語義",
+                  "file": "llm/04-applications/llm-api-response-structure.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["api", "response", "stop-reason", "usage", "streaming", "tool-use"]
+                },
+                {
+                  "id": "why-structured-output",
+                  "title": "Structured Output 的必要性",
+                  "file": "llm/04-applications/why-structured-output.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["structured-output", "tool-use", "json-mode", "constrained-decoding", "function-calling", "api", "reliability"]
+                },
+                {
+                  "id": "why-llm-outputs-unstable-format",
+                  "title": "LLM 格式不穩定的原因與對策",
+                  "file": "llm/04-applications/why-llm-outputs-unstable-format.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["structured-output", "format-instability", "training-distribution", "temperature", "constrained-decoding", "reliability"]
+                },
+                {
+                  "id": "prompt-force-json-output",
+                  "title": "Prompt 驅動的 JSON 輸出技巧",
+                  "file": "llm/04-applications/prompt-force-json-output.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["prompt-engineering", "json", "structured-output", "few-shot", "prefill", "output-template", "post-processing"]
+                },
+                {
+                  "id": "temperature-and-structured-output",
+                  "title": "Temperature 與結構化輸出的相互作用",
+                  "file": "llm/04-applications/temperature-and-structured-output.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["temperature", "structured-output", "constrained-decoding", "sampling", "reliability", "inference"]
+                },
+                {
+                  "id": "langchain-structured-output",
+                  "title": "LangChain 的結構化輸出機制",
+                  "file": "llm/04-applications/langchain-structured-output.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["langchain", "structured-output", "pydantic", "tool-use", "json-mode", "framework"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "05-evals-safety",
+          "title": "評估與安全",
+          "description": "Benchmark、evals、alignment、安全議題",
+          "sections": [
+            {
+              "id": "evals",
+              "title": "Evaluation 方法",
+              "notes": [
+                {
+                  "id": "why-llm-needs-eval",
+                  "title": "LLM 評估的獨特挑戰與方法",
+                  "file": "llm/05-evals-safety/why-llm-needs-eval.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["evaluation", "benchmark", "llm-as-judge", "human-eval", "mmlu", "gsm8k", "data-contamination"]
+                },
+                {
+                  "id": "how-to-design-eval-dataset",
+                  "title": "高品質評估集設計的原則",
+                  "file": "llm/05-evals-safety/how-to-design-eval-dataset.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["evaluation", "eval-dataset", "golden-label", "llm-as-judge", "goodharts-law", "regression-testing", "distribution-drift"]
+                },
+                {
+                  "id": "train-val-test-in-llm",
+                  "title": "LLM 中的訓練、驗證、測試劃分",
+                  "file": "llm/05-evals-safety/train-val-test-in-llm.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["train-val-test", "data-split", "prompt-overfitting", "data-contamination", "fine-tuning", "rlhf", "reward-hacking"]
+                },
+                {
+                  "id": "eval-metrics-overview",
+                  "title": "常見 LLM 評估指標與適用場景",
+                  "file": "llm/05-evals-safety/eval-metrics-overview.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["evaluation", "metrics", "bleu", "rouge", "bertscore", "exact-match", "pass-at-k", "perplexity", "win-rate", "llm-as-judge", "f1"]
+                }
+              ]
+            },
+            {
+              "id": "reliability",
+              "title": "可靠性與安全",
+              "notes": [
+                {
+                  "id": "prompt-injection",
+                  "title": "Prompt Injection 攻擊",
+                  "file": "llm/05-evals-safety/prompt-injection.mdx",
+                  "date": "2026-07-07",
+                  "tags": ["prompt-injection", "security", "direct-injection", "indirect-injection", "rag", "agent", "safety"]
+                },
+                {
+                  "id": "what-is-hallucination",
+                  "title": "LLM 的 Hallucination 問題",
+                  "file": "llm/05-evals-safety/what-is-hallucination.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["hallucination", "reliability", "rag", "grounding", "rlhf", "safety"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "06-frontiers",
+          "title": "前沿趨勢",
+          "description": "MoE、multimodal、long context、reasoning models",
+          "sections": [
+            {
+              "id": "multimodal",
+              "title": "多模態",
+              "notes": [
+                {
+                  "id": "multimodal-llm",
+                  "title": "多模態 LLM 與視覺資訊的整合",
+                  "file": "llm/06-frontiers/multimodal-llm.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["multimodal", "vision", "vit", "clip", "image", "projection-layer"]
+                },
+                {
+                  "id": "modality-translation-loss",
+                  "title": "Modality Translation Loss 與資訊遺失",
+                  "file": "llm/06-frontiers/modality-translation-loss.mdx",
+                  "date": "2026-07-08",
+                  "tags": ["multimodal", "modality-translation-loss", "vision-encoder", "hallucination", "lossy-compression", "grounding"]
+                }
+              ]
+            },
+            {
+              "id": "reasoning",
+              "title": "Reasoning Models",
+              "notes": [
+                {
+                  "id": "reasoning-models",
+                  "title": "Reasoning Model 與擴展思考能力",
+                  "file": "llm/06-frontiers/reasoning-models.mdx",
+                  "date": "2026-07-06",
+                  "tags": ["reasoning-model", "chain-of-thought", "prm", "orm", "o1", "extended-thinking"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "swe",
+      "title": "SWE",
+      "description": "軟體工程：系統設計、程式品質、資料與儲存、開發流程",
+      "chapters": [
+        {
+          "id": "01-system-design",
+          "title": "系統設計",
+          "description": "架構模式、分散式系統、API 設計、擴展性",
+          "sections": [
+            {
+              "id": "api-design",
+              "title": "API 設計與通訊協定",
+              "notes": [
+                {
+                  "id": "what-is-grpc",
+                  "title": "gRPC 的原理與設計",
+                  "file": "swe/01-system-design/what-is-grpc.mdx",
+                  "date": "2026-07-10",
+                  "tags": ["grpc", "protobuf", "rpc", "http2", "streaming", "api-design", "microservices", "idl"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "02-code-quality",
+          "title": "程式品質",
+          "description": "OOP、Clean Code、重構、設計模式、測試",
+          "sections": [
+            {
+              "id": "oop-clean-code",
+              "title": "OOP 與 Clean Code",
+              "notes": [
+                {
+                  "id": "oop-and-clean-code-learning-path",
+                  "title": "OOP 與 Clean Code 的系統性學習路徑",
+                  "file": "swe/02-code-quality/oop-and-clean-code-learning-path.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["oop", "clean-code", "solid", "design-patterns", "refactoring", "code-smell"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "03-data-storage",
+          "title": "資料與儲存",
+          "description": "資料庫、索引、交易、cache、訊息佇列",
+          "sections": []
+        },
+        {
+          "id": "04-delivery",
+          "title": "開發流程",
+          "description": "CI/CD、版本控制、code review、工程效率",
+          "sections": []
+        }
+      ]
+    },
+    {
+      "id": "sre",
+      "title": "SRE",
+      "description": "站點可靠性工程：SLO、可觀測性、維運、事故處理",
+      "chapters": [
+        {
+          "id": "01-reliability",
+          "title": "可靠性基礎",
+          "description": "SLI/SLO、error budget、可用性設計",
+          "sections": []
+        },
+        {
+          "id": "02-observability",
+          "title": "可觀測性",
+          "description": "Metrics、logging、tracing、告警設計",
+          "sections": [
+            {
+              "id": "opentelemetry",
+              "title": "OpenTelemetry",
+              "notes": [
+                {
+                  "id": "what-is-opentelemetry",
+                  "title": "OpenTelemetry 的功能與應用",
+                  "file": "sre/02-observability/what-is-opentelemetry.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["opentelemetry", "otel", "tracing", "metrics", "logging", "observability", "otlp", "context-propagation", "semantic-conventions", "sampling"]
+                },
+                {
+                  "id": "otel-gcp-gke-case-study",
+                  "title": "OpenTelemetry 在 GKE + GCP 上的實踐案例",
+                  "file": "sre/02-observability/otel-gcp-gke-case-study.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["opentelemetry", "otel", "gke", "gcp", "cloud-trace", "cloud-logging", "cloud-monitoring", "managed-prometheus", "workload-identity", "trace-explorer", "logs-explorer", "metrics-explorer", "case-study"]
+                },
+                {
+                  "id": "otel-metrics-api-fastapi",
+                  "title": "OpenTelemetry 的 Metrics API 與其他 API 總覽（以 FastAPI 為例）",
+                  "file": "sre/02-observability/otel-metrics-api-fastapi.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["opentelemetry", "otel", "metrics-api", "meter", "counter", "histogram", "observable-gauge", "fastapi", "instrumentation", "tracer-api", "propagator-api"]
+                }
+              ]
+            },
+            {
+              "id": "metrics-monitoring",
+              "title": "指標監控",
+              "notes": [
+                {
+                  "id": "prometheus-and-grafana-overview",
+                  "title": "Prometheus 與 Grafana 的功能與協作方式",
+                  "file": "sre/02-observability/prometheus-and-grafana-overview.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["prometheus", "grafana", "metrics", "promql", "alertmanager", "tsdb", "observability", "dashboard", "pull-model", "service-discovery"]
+                }
+              ]
+            },
+            {
+              "id": "gcp-tools",
+              "title": "GCP 可觀測性工具",
+              "notes": [
+                {
+                  "id": "gcp-cloud-observability-overview",
+                  "title": "GCP Cloud Observability 套件總覽",
+                  "file": "sre/02-observability/gcp-cloud-observability-overview.mdx",
+                  "date": "2026-07-11",
+                  "tags": ["gcp", "cloud-observability", "cloud-logging", "cloud-monitoring", "cloud-trace", "cloud-profiler", "error-reporting", "ops-agent", "monitored-resource", "observability", "overview"]
+                },
+                {
+                  "id": "gcp-logs-trace-metrics-error-reporting",
+                  "title": "GCP Logs Explorer、Trace Explorer、Metrics Explorer 與 Error Reporting 的關係",
+                  "file": "sre/02-observability/gcp-logs-trace-metrics-error-reporting.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gcp", "cloud-logging", "logs-explorer", "cloud-trace", "trace-explorer", "cloud-monitoring", "metrics-explorer", "error-reporting", "observability", "monitored-resource", "alerting-policy", "log-based-metrics", "notification"]
+                },
+                {
+                  "id": "gcp-monitoring-dashboard",
+                  "title": "Cloud Monitoring Dashboard 與 Metrics Explorer 的關係",
+                  "file": "sre/02-observability/gcp-monitoring-dashboard.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gcp", "cloud-monitoring", "dashboard", "metrics-explorer", "widget", "alerting-policy", "dashboard-as-code", "observability"]
+                },
+                {
+                  "id": "gcp-uptime-checks-and-alerting",
+                  "title": "GCP Cloud Monitoring 的 Uptime Checks 與 Alerting 功能",
+                  "file": "sre/02-observability/gcp-uptime-checks-and-alerting.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gcp", "cloud-monitoring", "uptime-check", "alerting-policy", "notification-channel", "black-box-monitoring", "incident", "slo", "observability"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "03-operations",
+          "title": "維運實務",
+          "description": "部署、放量、回滾、容量規劃",
+          "sections": [
+            {
+              "id": "resource-management",
+              "title": "資源管理（Requests / Limits）",
+              "notes": [
+                {
+                  "id": "gke-pod-memory-without-limit",
+                  "title": "GKE Pod 記憶體管理：Request 與 Limit 的實際運作",
+                  "file": "sre/03-operations/gke-pod-memory-without-limit.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gke", "kubernetes", "memory", "requests", "limits", "qos-class", "oom-killer", "cgroup", "capacity-planning"]
+                }
+              ]
+            },
+            {
+              "id": "networking",
+              "title": "網路架構",
+              "notes": [
+                {
+                  "id": "gcp-vpc-network",
+                  "title": "GCP VPC Network 的架構與核心概念",
+                  "file": "sre/03-operations/gcp-vpc-network.mdx",
+                  "date": "2026-07-09",
+                  "tags": ["gcp", "vpc", "subnet", "firewall-rules", "routes", "vpc-peering", "shared-vpc", "private-service-connect", "cloud-nat", "cloud-interconnect", "networking"]
+                }
+              ]
+            },
+            {
+              "id": "scheduling",
+              "title": "排程",
+              "notes": [
+                {
+                  "id": "k8s-cronjob-vs-cloud-scheduler",
+                  "title": "Kubernetes CronJob 與 GCP Cloud Scheduler 的差異與選型",
+                  "file": "sre/03-operations/k8s-cronjob-vs-cloud-scheduler.mdx",
+                  "date": "2026-07-13",
+                  "tags": ["kubernetes", "cronjob", "gcp", "cloud-scheduler", "scheduling", "pub-sub", "cloud-run", "job", "concurrency-policy", "dead-mans-switch", "idempotency", "reliability", "kube-state-metrics"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "04-incident",
+          "title": "事故處理",
+          "description": "On-call、事故分級、postmortem",
+          "sections": []
+        }
+      ]
+    }
+  ]
+}

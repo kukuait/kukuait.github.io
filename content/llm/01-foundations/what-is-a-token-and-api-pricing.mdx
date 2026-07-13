@@ -1,0 +1,87 @@
+# Token 與 API 計費模型
+
+> 一句話版本：token 是 LLM 處理文字的最小單位——比「字元」大、通常比「單字」小的子詞 (subword) 片段；API 計費就是數 token：輸入 (input) 與輸出 (output) 分開計價、以「每百萬 token」為單位，輸出通常比輸入貴 3~5 倍。
+
+## Step 1：為什麼需要 token？——字元太碎，單字太多
+
+模型不能直接吃原始文字，必須先把文字切成有限集合裡的單位，才能查表（embedding）變成向量。兩個極端都不好：
+
+| 切法 | 問題 |
+|------|------|
+| 一個字元一個單位 | 詞彙表小，但序列超長、每個單位資訊量太低 |
+| 一個單字一個單位 | 詞彙表爆炸 （所有語言所有變形），還會遇到沒見過的新字 (OOV) |
+
+**Subword tokenization** 是折衷：常見的字串合併成一個 token，罕見的字拆成多個小片段。主流演算法是 **BPE (Byte Pair Encoding)**——從單一 byte 出發，反覆把語料中最常相鄰出現的 pair 合併成新 token，直到詞彙表到達目標大小 （常見 3 萬~20 萬）。
+
+```text
+"tokenization"   → ["token", "ization"]        (2 tokens)
+"unbelievable"   → ["un", "believ", "able"]    (3 tokens)
+"the"            → ["the"]                     (1 token，超常見所以獨占一格)
+"今天天氣很好"    → ["今天", "天", "氣", "很", "好"] (中文通常 1 字 ≈ 1~2 tokens)
+```
+
+經驗值：**英文約 1 個單字 ≈ 1.3 tokens；中文約 1 個字 ≈ 1~2 tokens**。同一段意思，中文常比英文吃掉更多 token——這直接影響成本。
+
+注意兩點：
+
+1. **Tokenizer 是跟著模型走的**：不同模型家族 （甚至同家族不同代） 的切法與詞彙表不同，同一段文字的 token 數會不一樣。
+2. 模型的 context window （如 200K、1M）、輸出上限 （max_tokens）、計費，**全部以 token 為單位**，不是字數。
+
+## Step 2：API 如何計費？——input 與 output 分開數
+
+一次 API 呼叫的成本：
+
+$$
+\text{cost} = \frac{\text{input tokens}}{10^6} \times P_{in} + \frac{\text{output tokens}}{10^6} \times P_{out}
+$$
+
+- **Input tokens**：你送進去的所有東西——system prompt、對話歷史、工具定義、文件內容。
+- **Output tokens**：模型生成的所有東西——包含看不見的 **thinking （推理）token 也算 output 計費**。
+- **輸出比輸入貴 3~5 倍**：生成是逐 token 自迴歸解碼，每個 token 都要跑一次完整 forward pass；輸入則可以一次平行處理。
+
+以 Anthropic 目前的定價為例 （每百萬 token，2026-06）：
+
+| 模型 | Input | Output |
+|------|-------|--------|
+| Claude Fable 5 | `$10.00` | `$50.00` |
+| Claude Opus 4.8 | `$5.00` | `$25.00` |
+| Claude Sonnet 4.6 | `$3.00` | `$15.00` |
+| Claude Haiku 4.5 | `$1.00` | `$5.00` |
+
+另一個隱藏成本：API 是**無狀態**的，多輪對話每一輪都要把完整歷史重新送進去——對話越長，每輪的 input token 越多，成本呈平方級成長。這也是下一步省錢機制存在的原因。
+
+## Step 3：三個主要省錢機制
+
+| 機制 | 原理 | 折扣 |
+|------|------|------|
+| **Prompt caching** | 相同的前綴（system prompt、文件、對話歷史）第一次處理後快取起來，之後直接重用 | 快取讀取約 **0.1 倍**價格（寫入付 1.25 倍） |
+| **Batch API** | 不急的請求批次送，異步處理（通常 1 小時內完成） | 全部 token **5 折** |
+| **選對模型** | 簡單任務（分類、抽取）用小模型 | Haiku vs Fable 5 差 10 倍以上 |
+
+Prompt caching 是**前綴匹配**：前綴中任何一個 byte 改變（例如 system prompt 裡塞了時間戳），之後的快取全部失效——所以穩定內容放前面、每次都變的內容放最後。
+
+## Step 4：如何事先估算？
+
+不要用字數換算猜，直接呼叫官方的 token 計數 API（免費）：
+
+```python
+resp = client.messages.count_tokens(
+    model="claude-opus-4-8",   # token 數是 model-specific 的,要指定同一個模型
+    messages=[{"role": "user", "content": text}],
+)
+print(resp.input_tokens)
+```
+
+呼叫完成後，回應的 `usage` 欄位會回報實際用量：`input_tokens`、`output_tokens`、`cache_read_input_tokens` 等，可拿來做成本監控。
+
+## 小結
+
+1. Token 是 subword 單位：英文 1 字 ≈ 1.3 tokens，中文 1 字 ≈ 1~2 tokens。
+2. 計費 = input 單價 × input 量 + output 單價 × output 量，output 貴 3~5 倍，thinking 也算 output。
+3. 多輪對話會重送全部歷史，長對話靠 prompt caching（0.1 倍）與 Batch API（5 折）控制成本。
+4. 估算用官方 `count_tokens` API，不要用其他家的 tokenizer（如 tiktoken）換算。
+
+## 相關筆記
+
+- [LLM 是如何運作的？](#/llm/01-foundations/how-do-llms-work.mdx)
+- [模型訓練和微調有什麼差異？](#/llm/02-training/pretraining-vs-finetuning.mdx)

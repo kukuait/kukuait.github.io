@@ -1,0 +1,103 @@
+# 約束設計：穩定化 LLM 輸出
+
+> 一句話版本：Constraint 是在 prompt 中**明確縮小輸出空間**的設計——沒有 constraint，模型會「發揮創意」填滿你沒說清楚的地方。好的 constraint 設計讓模型不需要猜，輸出自然穩定。
+
+## Step 1：為什麼需要 Constraint？
+
+LLM 的輸出空間幾乎無限——同樣的問題可以用上百種格式、長度、語氣回答。Constraint 的作用是：
+
+```mermaid
+flowchart LR
+    A["無 constraint\n輸出空間：無限"] -- "加上 constraint" --> B["有 constraint\n輸出空間：縮小到可控範圍"]
+    B --> C["輸出穩定、可解析、符合預期"]
+```
+
+## Step 2：五類 Constraint 設計
+
+### 類型 1：格式約束（最常用）
+
+指定輸出的確切結構，讓下游程式可以直接解析。
+
+```text
+輸出格式：只輸出 JSON，不要有額外說明或 markdown code block。
+{
+  "sentiment": "positive" | "negative" | "neutral",
+  "confidence": 0.0 到 1.0 之間的小數,
+  "reason": "一句話說明原因"
+}
+```
+
+**使用 XML tag 分隔**（防止資料污染指令）：
+
+```text
+<instruction>
+  審閱以下程式碼，找出 bug。
+  格式：每個 bug 一行，"severity | 行號 | 說明"。
+</instruction>
+<code>
+  ... 程式碼 ...
+</code>
+```
+
+### 類型 2：範圍約束
+
+明確排除不想要模型做的事。
+
+```text
+只分析 <code> 標籤內的程式碼本身，不要猜測呼叫端行為。
+只根據提供的文件內容回答，不要引用文件以外的知識。
+不要給出建議，只陳述事實。
+```
+
+### 類型 3：退路約束（減少幻覺的關鍵）
+
+這是**最值得加的一類 constraint**：告訴模型資訊不足時該怎麼辦，否則模型會傾向硬給答案（hallucination）。
+
+```text
+如果文件中沒有足夠資訊回答問題，回答「資訊不足」，不要猜測。
+不確定時說「不確定」，不要給出沒把握的答案。
+如果輸入格式不符合預期，回答「輸入格式錯誤：[說明原因]」。
+```
+
+### 類型 4：長度約束
+
+```text
+回答限制在 3 個重點以內，每點不超過一句話。
+摘要不超過 50 字。
+說明要簡短，不要廢話。
+```
+
+### 類型 5：互斥約束
+
+多分類任務中特別重要，防止模型給出曖昧的「都算」回答。
+
+```text
+每個項目只能歸入一個類別，不能同時標記多個。
+如果某項目同時符合多個類別，選最主要的那個。
+```
+
+## Step 3：設計原則
+
+| 原則 | 說明 | 範例 |
+|------|------|------|
+| 正面描述優先 | 說「要什麼」比說「不要什麼」更清楚 | 「輸出 JSON」比「不要輸出 Markdown」更好 |
+| 退路永遠值得加 | 對幾乎所有任務都有效，成本極低 | 「不知道就說不知道」 |
+| 範圍約束 > 事後過濾 | 在 prompt 限制好，比事後 parse 輸出更穩 | 用 XML tag 分隔資料與指令 |
+| 搭配 few-shot 鞏固 | 光靠文字描述格式不夠精確時，加一個符合 constraint 的範例 | 範例直接示範正確格式 |
+| 約束要可驗證 | 如果你自己說不清楚「符合」意味著什麼，模型也說不清楚 | 「簡短」不如「50 字以內」 |
+
+## Step 4：Constraint 設計 Checklist
+
+寫完 prompt 後，用這幾個問題自檢：
+
+1. 輸出格式有沒有明確指定？（JSON？Markdown？純文字？）
+2. 模型「不知道」時會怎麼辦？有沒有退路？
+3. 任務範圍有沒有明確界定？模型能猜到「不在範圍內」的事嗎？
+4. 多輸出類別的任務有沒有指定互斥規則？
+5. 長度/數量有沒有上限？
+
+## 相關筆記
+
+- [In-context learning 與 Prompt engineering 是什麼？](#/llm/04-applications/icl-and-prompt-engineering.mdx)
+- [Zero-shot、Few-shot、Instruction Prompting 有什麼差別？](#/llm/04-applications/prompting-styles.mdx)
+- [Prompt Injection 是什麼？](#/llm/05-evals-safety/prompt-injection.mdx)
