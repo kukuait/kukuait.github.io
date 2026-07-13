@@ -486,6 +486,19 @@
               ]
             },
             {
+              "id": "cloud-run",
+              "title": "Cloud Run",
+              "notes": [
+                {
+                  "id": "gcp-cloud-run-overview",
+                  "title": "GCP Cloud Run 的原理與應用",
+                  "file": "sre/05-gcp/gcp-cloud-run-overview.mdx",
+                  "date": "2026-07-13",
+                  "tags": ["gcp", "cloud-run", "serverless", "container", "cold-start", "concurrency", "revision", "traffic-splitting", "cloud-run-jobs", "gvisor", "scaling", "canary"]
+                }
+              ]
+            },
+            {
               "id": "gke-workloads",
               "title": "GKE 工作負載",
               "notes": [
