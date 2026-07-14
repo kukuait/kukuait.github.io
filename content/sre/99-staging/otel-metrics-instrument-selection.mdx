@@ -1,0 +1,179 @@
+# OTel Metrics Instrument 選型指南
+
+> 選錯 Instrument 不會報錯，但 Metrics Explorer 的數字會沒有意義——理解語意才能選對工具。
+
+## 四種 Instrument 一覽
+
+| Instrument | 方法 | 語意 |
+|-----------|------|------|
+| `Counter` | `.add(n)`（n 必須為正） | 只增不減的累計事件數 |
+| `UpDownCounter` | `.add(+n)` / `.add(-n)` | 可增可減的當前數量 |
+| `Histogram` | `.record(value)` | 數值分佈（用於 p50/p95/p99） |
+| `ObservableGauge` | callback 回傳當前值 | 定期快照外部狀態 |
+
+---
+
+## Counter — 事件計數
+
+**語意**：每發生一次事件就加 1（或加 n），只增不減。
+
+```python
+checkout_counter = meter.create_counter(
+    name="checkout.success.total",
+    description="Number of successful checkouts",
+    unit="1",
+)
+
+# 在業務邏輯觸發點呼叫
+checkout_counter.add(1, attributes={
+    "payment_method": order.payment_method,  # "credit_card" / "wallet"
+    "region": order.region,
+})
+```
+
+在 Metrics Explorer 用 `rate()` 轉成每秒發生次數（RPS）。
+
+**適合**：checkout 成功數、HTTP request 總數、錯誤發生次數。
+
+**Cardinality 陷阱**：attributes 的組合數就是 cardinality。高基數欄位（`user_id`、`order_id`）不要放進 attributes，放進 trace attributes 就好：
+
+```python
+# 危險：幾百萬個 user_id 讓 cardinality 爆炸
+checkout_counter.add(1, attributes={"user_id": order.user_id})
+
+# 正確：低基數業務維度
+checkout_counter.add(1, attributes={"payment_method": "credit_card", "region": "TW"})
+```
+
+---
+
+## UpDownCounter — 當前資源持有量
+
+**語意**：追蹤「現在有多少」，你知道每一次變化的發生點。
+
+```python
+stock_level = meter.create_up_down_counter(
+    name="inventory.stock.current",
+    unit="1",
+)
+
+async def restock(sku: str, quantity: int):
+    stock_level.add(+quantity, attributes={"sku": sku})
+
+async def sell(sku: str, quantity: int):
+    stock_level.add(-quantity, attributes={"sku": sku})
+```
+
+**適合**：庫存數量、購物車內商品數、DB connection pool 使用中連線數、in-flight request 數。
+
+**與 Counter 的差異**：Counter 只能加正數，UpDownCounter 可以加負數。
+
+---
+
+## ObservableGauge — 外部狀態快照
+
+**語意**：你不控制這個值的變化，只能定期去讀它。SDK flush 時呼叫 callback，callback 回傳當下快照值。
+
+```python
+import psutil, socket
+
+def observe_memory(options):
+    yield metrics.Observation(
+        psutil.virtual_memory().percent,
+        attributes={"host": socket.gethostname()},
+    )
+
+meter.create_observable_gauge(
+    name="process.memory.utilization",
+    callbacks=[observe_memory],
+    unit="%",
+)
+```
+
+外部 queue 積壓數（需要 query 外部系統）：
+
+```python
+async def observe_queue_depth(options):
+    depth = await redis_client.llen("task-queue")
+    yield metrics.Observation(depth, attributes={"queue": "task-queue"})
+
+meter.create_observable_gauge(
+    name="queue.depth.current",
+    callbacks=[observe_queue_depth],
+    unit="1",
+)
+```
+
+**適合**：CPU / memory 使用率、外部 queue 積壓數、DB connection pool 狀態（從外部查詢）。
+
+**與 UpDownCounter 的差異**：UpDownCounter 是「我知道每次變化，主動 add」；ObservableGauge 是「我只能定期快照，被動 callback 回傳當前值」。
+
+---
+
+## Histogram — 數值分佈
+
+**語意**：每次 `record()` 一個數值，SDK 分 bucket 統計分佈，讓你之後算 p50 / p95 / p99。
+
+```python
+checkout_latency = meter.create_histogram(
+    name="checkout.duration",
+    unit="s",
+)
+
+@router.post("/checkout")
+async def checkout(order: OrderRequest):
+    start = time.perf_counter()
+    try:
+        result = await process_order(order)
+        return result
+    finally:
+        checkout_latency.record(
+            time.perf_counter() - start,
+            attributes={"region": order.region},
+        )
+```
+
+**適合**：request latency、payload size、任何關心「分佈」而不只是「總量」的數值。
+
+**與其他三種的根本差異**：Histogram 記的不是「現在是多少」，而是「歷史上每次測到的值長什麼樣子」。
+
+---
+
+## 選擇口訣
+
+```
+這個值只增不減（事件數）          → Counter
+這個值有增有減，我知道每次變化    → UpDownCounter
+這個值有增有減，我只能定期快照    → ObservableGauge
+我想知道 p95 / p99               → Histogram
+```
+
+---
+
+## 集中管理 Instrument（實務建議）
+
+把所有 instrument 集中在一個 `metrics.py` 模組，其他模組直接 import：
+
+```python
+# metrics.py
+from opentelemetry import metrics
+
+meter = metrics.get_meter("my-service", version="1.0.0")
+
+checkout_counter = meter.create_counter("checkout.success.total", unit="1")
+checkout_latency = meter.create_histogram("checkout.duration", unit="s")
+stock_level = meter.create_up_down_counter("inventory.stock.current", unit="1")
+```
+
+```python
+# checkout_router.py
+from metrics import checkout_counter, checkout_latency
+```
+
+避免在各地 `create_counter()` 重複建立同名 instrument。
+
+## 相關筆記
+
+- [GCP Log-based Metrics 與 OTel Metrics API 的差異](#/sre/99-staging/gcp-log-based-metrics-vs-otel-metrics.mdx)
+- [GCP Alerting Policy → Pub/Sub → 自訂 Webhook 完整串接](#/sre/99-staging/gcp-alerting-pubsub-webhook.mdx)
+- [OpenTelemetry 的 Metrics API 與其他 API 總覽（以 FastAPI 為例）](#/sre/06-opentelemetry/otel-metrics-api-fastapi.mdx)

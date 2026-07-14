@@ -594,6 +594,40 @@
           ]
         },
         {
+          "id": "99-staging",
+          "title": "暫存區",
+          "description": "待分類整理的筆記草稿",
+          "sections": [
+            {
+              "id": "drafts",
+              "title": "草稿",
+              "notes": [
+                {
+                  "id": "gcp-log-based-metrics-vs-otel-metrics",
+                  "title": "GCP Log-based Metrics 與 OTel Metrics API 的差異",
+                  "file": "sre/99-staging/gcp-log-based-metrics-vs-otel-metrics.mdx",
+                  "date": "2026-07-14",
+                  "tags": ["gcp", "log-based-metrics", "opentelemetry", "otel", "metrics", "rps", "fastapi", "auto-instrumentation", "cloud-monitoring"]
+                },
+                {
+                  "id": "otel-metrics-instrument-selection",
+                  "title": "OTel Metrics Instrument 選型指南",
+                  "file": "sre/99-staging/otel-metrics-instrument-selection.mdx",
+                  "date": "2026-07-14",
+                  "tags": ["opentelemetry", "otel", "counter", "histogram", "up-down-counter", "observable-gauge", "instrument", "metrics", "cardinality", "fastapi"]
+                },
+                {
+                  "id": "gcp-alerting-pubsub-webhook",
+                  "title": "GCP Alerting Policy → Pub/Sub → 自訂 Webhook 完整串接",
+                  "file": "sre/99-staging/gcp-alerting-pubsub-webhook.mdx",
+                  "date": "2026-07-14",
+                  "tags": ["gcp", "alerting-policy", "pub-sub", "webhook", "oidc", "notification-channel", "fastapi", "terraform", "cloud-monitoring", "routing"]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "id": "06-opentelemetry",
           "title": "OpenTelemetry",
           "description": "OTel API/SDK、三支柱（Traces、Metrics、Logs）原理與實務埋點",
