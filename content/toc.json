@@ -424,6 +424,19 @@
                   "tags": ["prometheus", "grafana", "metrics", "promql", "alertmanager", "tsdb", "observability", "dashboard", "pull-model", "service-discovery"]
                 }
               ]
+            },
+            {
+              "id": "usage-analytics",
+              "title": "使用行為分析",
+              "notes": [
+                {
+                  "id": "feature-usage-tracking-internal-system",
+                  "title": "內部系統功能使用率追蹤的業界做法",
+                  "file": "sre/02-observability/feature-usage-tracking-internal-system.mdx",
+                  "date": "2026-07-14",
+                  "tags": ["product-analytics", "feature-usage", "posthog", "opentelemetry", "bigquery", "fastapi", "react", "gke", "google-oauth", "event-tracking", "funnel-analysis"]
+                }
+              ]
             }
           ]
         },
@@ -542,6 +555,26 @@
                   "file": "sre/05-gcp/k8s-cronjob-vs-cloud-scheduler.mdx",
                   "date": "2026-07-13",
                   "tags": ["gcp", "gke", "cloud-scheduler", "kubernetes", "cronjob", "scheduling", "pub-sub", "cloud-run", "concurrency-policy", "dead-mans-switch", "idempotency", "reliability"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "07-security",
+          "title": "雲端安全",
+          "description": "Security Posture、CSPM、稽核工具、雲端資源設定審查",
+          "sections": [
+            {
+              "id": "posture-auditing",
+              "title": "安全態勢稽核",
+              "notes": [
+                {
+                  "id": "what-is-scoutsuite",
+                  "title": "ScoutSuite：多雲安全態勢稽核工具",
+                  "file": "sre/07-security/what-is-scoutsuite.mdx",
+                  "date": "2026-07-14",
+                  "tags": ["scoutsuite", "cspm", "security-posture", "cloud-security", "gcp", "aws", "azure", "iam", "misconfig", "audit"]
                 }
               ]
             }
