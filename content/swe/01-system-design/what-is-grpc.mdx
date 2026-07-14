@@ -24,7 +24,7 @@ gRPC 解決了以上問題：
 **適用場景**：微服務間的內部通訊（低延遲、高吞吐）、需要 streaming 的場景（音訊串流、即時推送）。
 **不適用場景**：對外公開 API（瀏覽器不能直接用 gRPC）、簡單的 CRUD REST API。
 
-## Step 2：定義契約——`.proto` 檔
+## Step 2：定義契約 ——`.proto` 檔
 
 `.proto` 是 gRPC 的 IDL（Interface Definition Language），語言中立：
 
@@ -53,7 +53,7 @@ message CreateOrderResponse {
 
 ## Step 3：Protobuf 序列化原理
 
-Protobuf 使用 **TLV（Tag-Length-Value）** 二進位編碼——每個欄位編碼成 `(field_number << 3 | wire_type)` 的 varint + 資料本體。
+Protobuf 使用 **TLV（Tag-Length-Value）** 二進位編碼 —— 每個欄位編碼成 `(field_number << 3 | wire_type)` 的 varint + 資料本體。
 
 ```
 JSON:    {"user_id":"u123","item_ids":["i1","i2"]}  → 約 46 bytes
@@ -149,7 +149,7 @@ func loggingInterceptor(
 grpc.NewServer(grpc.UnaryInterceptor(loggingInterceptor))
 ```
 
-常見用途：認證（JWT / mTLS）、distributed tracing（OpenTelemetry）、rate limiting、retry with backoff。
+常見用途：認證（JWT /mTLS）、distributed tracing（OpenTelemetry）、rate limiting、retry with backoff。
 
 ## 生產環境注意事項
 
@@ -162,7 +162,7 @@ grpc.NewServer(grpc.UnaryInterceptor(loggingInterceptor))
 **Schema 演進規則**：
 
 - 安全：新增欄位（舊 client 忽略未知欄位）
-- 危險：刪除欄位、改 field number、改欄位型別——會破壞相容性
+- 危險：刪除欄位、改 field number、改欄位型別 —— 會破壞相容性
 
 ## 相關筆記
 

@@ -1,10 +1,10 @@
 # In-Context Learning 與 Prompt Engineering
 
-> 一句話版本：In-context Learning (ICL) 是模型的一種**能力**——不更新權重，光靠 prompt 裡的資訊（尤其是範例）就能現場學會一個任務；Prompt Engineering 則是利用這個能力的**工程實務**——系統性地設計輸入文字，讓模型輸出你要的結果。一個是現象，一個是方法。
+> 一句話版本：In-context Learning (ICL) 是模型的一種**能力**—— 不更新權重，光靠 prompt 裡的資訊（尤其是範例）就能現場學會一個任務；Prompt Engineering 則是利用這個能力的**工程實務**—— 系統性地設計輸入文字，讓模型輸出你要的結果。一個是現象，一個是方法。
 
-## Step 1：In-context Learning——不改權重的「學習」
+## Step 1：In-context Learning—— 不改權重的「學習」
 
-傳統 ML 裡「學習」= 用資料更新權重。ICL 打破了這個等式：你把幾個範例直接放進 prompt，模型在**一次 forward pass 內**就表現得像學會了這個任務——權重一個位元都沒動。
+傳統 ML 裡「學習」= 用資料更新權重。ICL 打破了這個等式：你把幾個範例直接放進 prompt，模型在**一次 forward pass 內**就表現得像學會了這個任務 —— 權重一個位元都沒動。
 
 ```text
 輸入 (prompt)：
@@ -28,12 +28,12 @@
 ICL 沒有被明確地「教」，而是預訓練的副產品 （GPT-3 論文 *Language Models are Few-Shot Learners* 首次系統性展示）。直覺解釋：
 
 1. 網路語料充滿「重複模式」——FAQ 列表、對照表、範例接範例。要把 next-token 預測做好，模型必須學會**識別上下文中的模式並延續它**。
-2. 這個「模式歸納」能力隨模型規模成長而躍升，是典型的 emergent ability——小模型上幾乎看不到，大模型上突然可用。
-3. 機制研究上有個著名視角：attention 讓 transformer 能在 forward pass 中對 context 裡的範例做某種**隱式的類梯度更新** （induction heads、implicit gradient descent 等假說），等於「在推理時臨時微調了一下自己」——只是這個「微調」活在 activation 裡，prompt 一換就消失。
+2. 這個「模式歸納」能力隨模型規模成長而躍升，是典型的 emergent ability—— 小模型上幾乎看不到，大模型上突然可用。
+3. 機制研究上有個著名視角：attention 讓 transformer 能在 forward pass 中對 context 裡的範例做某種**隱式的類梯度更新** （induction heads、implicit gradient descent 等假說），等於「在推理時臨時微調了一下自己」—— 只是這個「微調」活在 activation 裡，prompt 一換就消失。
 
 一個常被混淆的點：**ICL 不會留下任何痕跡**。這次對話裡教會它的格式，下一次對話 （新的 context） 就忘了。要永久改變行為，才需要 fine-tuning。
 
-## Step 2：Prompt Engineering——把 ICL 變成可靠的工程
+## Step 2：Prompt Engineering—— 把 ICL 變成可靠的工程
 
 既然任務定義活在 prompt 裡，那 prompt 的寫法就直接決定輸出品質。Prompt Engineering 就是**系統性地設計與迭代 prompt** 的實務。
 
@@ -41,7 +41,7 @@ ICL 沒有被明確地「教」，而是預訓練的副產品 （GPT-3 論文 *L
 
 1. **唯一的行為控制槓桿**：你無法直接改模型權重，prompt 是使用者端能控制模型行為的唯一介面。
 2. **品質差距極大**：同一個模型，差的 prompt vs 好的 prompt 輸出品質天差地別 （見下方範例）。
-3. **成本最低的迭代工具**：改 prompt 秒級迭代、幾乎零成本；比 RAG 快，比 fine-tuning 更快——這讓它成為 LLM 應用的第一道調優手段，不夠再往下走。
+3. **成本最低的迭代工具**：改 prompt 秒級迭代、幾乎零成本；比 RAG 快，比 fine-tuning 更快 —— 這讓它成為 LLM 應用的第一道調優手段，不夠再往下走。
 4. **現代應用的基石**：RAG、agent、tool use 本質上是 prompt engineering 的自動化升級，核心原則不變：模型輸出的上限，取決於你放進 context 的東西。
 
 ### 常用技巧
@@ -61,9 +61,9 @@ ICL 沒有被明確地「教」，而是預訓練的副產品 （GPT-3 論文 *L
 ❌ 差：幫我看一下這段 code
 
 ✅ 好：你是資深 Python reviewer。審閱以下函式，依序檢查：
-   (1) 邊界條件 (2) 例外處理 (3) 命名。
-   輸出格式：每個問題一行，「severity | 行號 | 說明 | 建議修法」。
-   若沒有問題,輸出「LGTM」。
+(1) 邊界條件 (2) 例外處理 (3) 命名。
+輸出格式：每個問題一行，「severity | 行號 | 說明 | 建議修法」。
+若沒有問題，輸出「LGTM」。
 
    <code>
    ...
@@ -76,13 +76,13 @@ ICL 沒有被明確地「教」，而是預訓練的副產品 （GPT-3 論文 *L
 
 ```mermaid
 flowchart LR
-    A["預訓練"] --> B["ICL 能力<br>(模型天生會看 context 學)"]
+A ["預訓練"] --> B ["ICL 能力<br>(模型天生會看 context 學)"]
     B --> C["Prompt Engineering<br>(人工設計輸入來利用它)"]
     C --> D["Context Engineering<br>(系統化組裝 context：<br>RAG 檢索、工具結果、記憶、歷史)"]
 ```
 
 - ICL 是**模型側**的能力；prompt engineering 是**使用者側**的方法。沒有 ICL，prompt engineering 就只剩「換句話說碰運氣」。
-- 現代 LLM 應用 （RAG、agent） 其實是 prompt engineering 的自動化升級：不再手寫全部 prompt，而是由系統動態把檢索結果、工具輸出、對話記憶組裝進 context——這個更廣的實務常被稱為 **Context Engineering**。核心原則不變：**模型的輸出品質，上限取決於你放進 context 的東西**。
+- 現代 LLM 應用 （RAG、agent） 其實是 prompt engineering 的自動化升級：不再手寫全部 prompt，而是由系統動態把檢索結果、工具輸出、對話記憶組裝進 context—— 這個更廣的實務常被稱為 **Context Engineering**。核心原則不變：**模型的輸出品質，上限取決於你放進 context 的東西**。
 
 ## 經驗法則
 

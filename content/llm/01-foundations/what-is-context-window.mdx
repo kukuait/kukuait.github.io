@@ -23,7 +23,7 @@ flowchart LR
 
 Context window 不是人為刁難，而是架構與成本的物理限制：
 
-1. **Attention 的計算複雜度**：Transformer 的 self-attention 要讓每個 token 和其他所有 token 兩兩計算關聯，複雜度是 $O(n^2)$ —— 序列長度 $n$ 翻倍，計算量變四倍。
+1. **Attention 的計算複雜度**：Transformer 的 self-attention 要讓每個 token 和其他所有 token 兩兩計算關聯，複雜度是 $O (n^2)$ —— 序列長度 $n$ 翻倍，計算量變四倍。
 2. **KV cache 的記憶體**：推理時每個 token 的 Key/Value 向量都要暫存在 GPU 記憶體，序列越長吃越多顯存。
 3. **位置編碼（positional encoding）的外推能力**：模型在訓練時只見過某個長度以內的序列，超過訓練長度後對位置的理解會退化，需要 RoPE scaling 等技巧才能延伸。
 
@@ -42,7 +42,7 @@ Context window 不是人為刁難，而是架構與成本的物理限制：
 
 ## Step 4：超過上限會怎樣？
 
-- **請求階段**：輸入本身就超過上限 → API 直接回錯誤（request too large / validation error）。
+- **請求階段**：輸入本身就超過上限 → API 直接回錯誤（request too large /validation error）。
 - **生成階段**：對話累積到接近上限 → 模型停止生成，回傳類似 `model_context_window_exceeded` 的 stop reason。
 
 實務上長對話有三種管理策略：

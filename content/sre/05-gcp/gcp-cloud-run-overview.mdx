@@ -1,13 +1,13 @@
 # GCP Cloud Run 的原理與應用
 
-> 全託管無伺服器容器平台：帶著 container image 來，其餘交給 GCP——自動 HTTPS、自動 scale、scale to zero。
+> 全託管無伺服器容器平台：帶著 container image 來，其餘交給 GCP—— 自動 HTTPS、自動 scale、scale to zero。
 
 ## Step 1：Cloud Run 是什麼？
 
 Cloud Run 是 GCP 的**全託管無伺服器容器平台（Serverless Container Runtime）**。你只需要準備好的 container image，Cloud Run 負責：
 
 - 啟動 container、暴露 HTTPS endpoint
-- 依請求流量自動 scale out / scale to zero
+- 依請求流量自動 scale out /scale to zero
 - 管理 TLS 憑證、load balancing、健康檢查
 
 定位是：**比 GKE 更簡單，比 Cloud Functions 更彈性**。任何語言的 container 都能上，不需要管理 node、cluster 或 ingress。
@@ -30,7 +30,7 @@ flowchart TD
 
 ## Step 3：Cold Start（冷啟動）
 
-Cloud Run scale to zero 的代價是 **Cold Start**——當沒有 warm instance 時，請求必須等待：
+Cloud Run scale to zero 的代價是 **Cold Start**—— 當沒有 warm instance 時，請求必須等待：
 
 $$
 T_{\text{cold}} = T_{\text{image pull}} + T_{\text{gVisor init}} + T_{\text{app startup}}
@@ -154,7 +154,7 @@ flowchart TD
     E -->|"排程 / 批次 / 事件"| G["Cloud Run Jobs\n（一次性任務）"]
 ```
 
-## Step 9：存取控制——Cloud Run 不一定是 Public
+## Step 9：存取控制 ——Cloud Run 不一定是 Public
 
 Cloud Run 預設會產生一個公開的 HTTPS URL，但存取控制可以透過兩個獨立維度鎖緊。
 
@@ -188,7 +188,7 @@ TOKEN=$(gcloud auth print-identity-token)
 curl -H "Authorization: Bearer $TOKEN" https://my-service-xxx.run.app
 ```
 
-Service account 之間互打同理——呼叫方的 SA 需被授予目標 service 的 `run.invoker` role。
+Service account 之間互打同理 —— 呼叫方的 SA 需被授予目標 service 的 `run.invoker` role。
 
 ### 常見架構模式
 

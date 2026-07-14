@@ -1,6 +1,6 @@
 # Temperature 與結構化輸出的相互作用
 
-> Temperature 控制的是取樣隨機性——格式穩定性和創意輸出是相反方向的需求，structured output 場景幾乎永遠應該用低 temperature。
+> Temperature 控制的是取樣隨機性 —— 格式穩定性和創意輸出是相反方向的需求，structured output 場景幾乎永遠應該用低 temperature。
 
 ## 回顧：Temperature 是什麼
 
@@ -87,7 +87,7 @@ sequenceDiagram
     S->>S: 從剩餘合法 token 取樣
 ```
 
-Constrained decoding 在 temperature 縮放**之後**才 mask——這意味著即使 temperature 很高，非法 token 的機率仍然是 0。溫度影響的只是合法 token 之間的選擇（欄位值的多樣性），不影響格式正確性。
+Constrained decoding 在 temperature 縮放**之後**才 mask—— 這意味著即使 temperature 很高，非法 token 的機率仍然是 0。溫度影響的只是合法 token 之間的選擇（欄位值的多樣性），不影響格式正確性。
 
 ## 相關筆記
 

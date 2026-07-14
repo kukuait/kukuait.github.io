@@ -22,7 +22,7 @@ OpenTelemetry 統一定義了可觀測性的三種資料型態，這也是它最
 | **Metrics** | 系統整體的量化指標（QPS、延遲分布、error rate）？| 數值型時間序列，可聚合（counter、histogram、gauge） |
 | **Logs** | 某個時間點、某個 span 上發生了什麼細節事件？| 結構化事件，可透過 trace id 關聯回對應的 span |
 
-三者共用同一份 **Resource**（標記這筆資料來自哪個 service、哪個 host、哪個 k8s pod）與同一套 **Context**（trace id、span id），所以可以互相關聯——這是 OTel 相對於「各自為政」的舊工具最大的價值：同一個請求的 log、trace、metric 可以用 trace id 串起來一起查。
+三者共用同一份 **Resource**（標記這筆資料來自哪個 service、哪個 host、哪個 k8s pod）與同一套 **Context**（trace id、span id），所以可以互相關聯 —— 這是 OTel 相對於「各自為政」的舊工具最大的價值：同一個請求的 log、trace、metric 可以用 trace id 串起來一起查。
 
 ## Step 3：架構長什麼樣子？
 
@@ -43,7 +43,7 @@ flowchart LR
 三個關鍵層次：
 
 1. **API**：定義「怎麼呼叫」的介面（例如 `tracer.startSpan(...)`），應用程式碼只依賴這層，不依賴任何具體後端。
-2. **SDK**:API 的實際實作，負責取樣（sampling）、批次處理（batching）、將資料轉成 **OTLP**（OpenTelemetry Protocol）格式送出。SDK 是可替換的——理論上你可以換一套 SDK 而不改業務程式碼。
+2. **SDK**:API 的實際實作，負責取樣（sampling）、批次處理（batching）、將資料轉成 **OTLP**（OpenTelemetry Protocol）格式送出。SDK 是可替換的 —— 理論上你可以換一套 SDK 而不改業務程式碼。
 3. **Collector**：獨立部署的資料處理管線（可以是 sidecar 或獨立服務），接收 OTLP 資料後做 receivers → processors（如過濾、加 attribute、取樣、批次）→ exporters（轉送到任意數量的後端）。有了 Collector，應用程式不需要知道最終資料會送去哪個後端，後端要換也不用重新部署應用程式。
 
 ## Step 4：埋點（Instrumentation）怎麼做？
@@ -55,7 +55,7 @@ OTel 提供兩種埋點方式：
 
 實務上通常是兩者混用：auto-instrumentation 打底（HTTP/DB 呼叫都自動有 span），manual instrumentation 補業務關鍵路徑。
 
-## Step 5:Context Propagation——分散式追蹤的關鍵
+## Step 5:Context Propagation—— 分散式追蹤的關鍵
 
 一個請求跨越多個服務時，OTel 靠 **Context Propagation** 把 trace context（trace id + span id）透過 HTTP header 或訊息佇列 metadata 傳遞下去，讓下游服務產生的 span 能正確掛在同一棵 trace 樹下。
 
@@ -74,7 +74,7 @@ sequenceDiagram
 
 標準的傳遞格式是 **W3C Trace Context**(`traceparent` header),OTel 預設遵循這個標準，所以能跨語言、跨廠商互通。除了 trace context，還有 **Baggage** 機制可以在整條呼叫鏈傳遞任意 key-value（例如 tenant id），但要注意 baggage 會隨每一跳傳遞，濫用會增加網路開銷。
 
-## Step 6:Semantic Conventions——標準化的命名規則
+## Step 6:Semantic Conventions—— 標準化的命名規則
 
 如果每個團隊對「這是一次 HTTP 呼叫」的 attribute 命名都不一樣（有人叫 `http_method`，有人叫 `method`），資料就無法跨系統比較查詢。OTel 定義了一套 **Semantic Conventions**，規定常見場景的標準屬性名稱，例如：
 
@@ -84,7 +84,7 @@ sequenceDiagram
 
 這讓不同語言、不同團隊產出的資料在後端可以用同一套 query/dashboard 邏輯處理。
 
-## Step 7:Sampling——控制資料量與成本
+## Step 7:Sampling—— 控制資料量與成本
 
 Trace 資料量在高流量系統會非常大，OTel 支援兩種取樣策略：
 
@@ -97,9 +97,9 @@ Trace 資料量在高流量系統會非常大，OTel 支援兩種取樣策略：
 |------|------------|
 | 廠商鎖死，換後端要重寫埋點 | API/SDK 與後端解耦，只換 exporter 設定 |
 | Trace/Metric/Log 各自為政，查問題要切換多個工具 | 共用 Resource + trace id，可互相關聯 |
-| 各語言/團隊 attribute 命名不一致 | Semantic Conventions 標準化 |
+| 各語言 / 團隊 attribute 命名不一致 | Semantic Conventions 標準化 |
 | 高流量下 trace 資料爆量 | Head-based / Tail-based sampling |
-| 應用程式要知道資料送去哪裡 | Collector 集中處理 routing/轉送 |
+| 應用程式要知道資料送去哪裡 | Collector 集中處理 routing / 轉送 |
 
 ## 相關筆記
 

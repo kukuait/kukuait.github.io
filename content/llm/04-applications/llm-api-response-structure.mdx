@@ -39,7 +39,7 @@
 | `tool_use` | 模型想呼叫工具：`id` + `name` + `input` 參數 | 有給 tools 且模型決定使用時 |
 | `web_search_tool_result` 等 | 伺服器端工具的執行結果 | 使用 server-side tools 時 |
 
-所以解析時**永遠不要假設 `content[0]` 是文字**，要用 type 過濾：
+所以解析時 ** 永遠不要假設 `content[0]` 是文字 **，要用 type 過濾：
 
 ```python
 for block in response.content:
@@ -58,7 +58,7 @@ for block in response.content:
 | `end_turn` | 自然講完了 | 正常結束 |
 | `max_tokens` | 撞到輸出上限，**內容被截斷** | 提高 `max_tokens` 或改用 streaming |
 | `stop_sequence` | 命中你自訂的停止字串 | 依應用邏輯處理 |
-| `tool_use` | 模型要呼叫工具 | 執行工具 → 把 `tool_result` 回傳 → 再呼叫一次 API(agent loop) |
+| `tool_use` | 模型要呼叫工具 | 執行工具 → 把 `tool_result` 回傳 → 再呼叫一次 API (agent loop) |
 | `pause_turn` | 伺服器端工具長任務暫停 | 原樣重送，讓它繼續 |
 | `refusal` | 安全機制拒答 | 檢查 `stop_details`，不要原 prompt 重試 |
 

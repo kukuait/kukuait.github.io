@@ -1,6 +1,6 @@
 # Modality Translation Loss 與資訊遺失
 
-> 把圖片、語音等連續訊號「翻譯」成 LLM 看得懂的向量或文字時，這個轉換過程本質上是有損壓縮——凡是對訓練目標不重要的細節，都會在轉換階段被丟掉，而且事後無法從 LLM 這一側復原。
+> 把圖片、語音等連續訊號「翻譯」成 LLM 看得懂的向量或文字時，這個轉換過程本質上是有損壓縮 —— 凡是對訓練目標不重要的細節，都會在轉換階段被丟掉，而且事後無法從 LLM 這一側復原。
 
 ---
 
@@ -52,8 +52,8 @@ flowchart LR
 
 ## Step 4：這跟其他「損失」概念的關係
 
-- 跟 [Hallucination](#/llm/05-evals-safety/what-is-hallucination.mdx) 的關係：當細節被壓縮丟失後，LLM 面對「被問到已經不存在的細節」時，傾向用語言模型的先驗機率去「腦補」一個合理答案，而不是誠實地說「看不清楚」——這是 modality translation loss 誘發 hallucination 的典型路徑。
-- 跟 tokenization 的類比：文字的 [tokenization](#/llm/01-foundations/what-is-a-token-and-api-pricing.mdx) 也是一種有損轉換（例如把生僻字切成多個 subword token，模型較難掌握字元級細節，像是數某個單字裡有幾個字母）。模態轉換遺失可以理解成同一類問題在圖片 / 語音上的放大版——因為連續訊號要壓縮的倍率遠高於文字。
+- 跟 [Hallucination](#/llm/05-evals-safety/what-is-hallucination.mdx) 的關係：當細節被壓縮丟失後，LLM 面對「被問到已經不存在的細節」時，傾向用語言模型的先驗機率去「腦補」一個合理答案，而不是誠實地說「看不清楚」—— 這是 modality translation loss 誘發 hallucination 的典型路徑。
+- 跟 tokenization 的類比：文字的 [tokenization](#/llm/01-foundations/what-is-a-token-and-api-pricing.mdx) 也是一種有損轉換（例如把生僻字切成多個 subword token，模型較難掌握字元級細節，像是數某個單字裡有幾個字母）。模態轉換遺失可以理解成同一類問題在圖片 / 語音上的放大版 —— 因為連續訊號要壓縮的倍率遠高於文字。
 
 ---
 

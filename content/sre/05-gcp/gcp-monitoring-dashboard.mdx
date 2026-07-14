@@ -31,7 +31,7 @@ flowchart LR
     D -- "疊加閾值線" --> C
 ```
 
-實務流程通常是：在 Metrics Explorer 反覆調整查詢，找到一張「有意義、值得長期盯著」的圖之後，按下 **Save Chart to Dashboard**，這張圖的查詢定義就會被固化成 Dashboard 上的一個 widget——所以 Dashboard 上大部分的圖，源頭都是某一次在 Metrics Explorer 裡調好的查詢。
+實務流程通常是：在 Metrics Explorer 反覆調整查詢，找到一張「有意義、值得長期盯著」的圖之後，按下 **Save Chart to Dashboard**，這張圖的查詢定義就會被固化成 Dashboard 上的一個 widget—— 所以 Dashboard 上大部分的圖，源頭都是某一次在 Metrics Explorer 裡調好的查詢。
 
 ## Step 4：Dashboard 的三種建立方式
 
@@ -41,7 +41,7 @@ flowchart LR
 
 ## Step 5：Dashboard 與告警的分工
 
-告警本身**不是**設定在 Dashboard 上——告警是獨立的 Alerting Policy（定義 metric + 條件 + 通知管道）。Dashboard 只是視覺化呈現層，可以選擇性疊加顯示某個 alerting policy 的閾值線，方便你在看趨勢圖時同時知道「多接近會觸發告警」，但兩者是分開設定、分開運作的兩個資源。
+告警本身**不是**設定在 Dashboard 上 —— 告警是獨立的 Alerting Policy（定義 metric + 條件 + 通知管道）。Dashboard 只是視覺化呈現層，可以選擇性疊加顯示某個 alerting policy 的閾值線，方便你在看趨勢圖時同時知道「多接近會觸發告警」，但兩者是分開設定、分開運作的兩個資源。
 
 ## 相關筆記
 

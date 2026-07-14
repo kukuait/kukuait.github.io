@@ -1,6 +1,6 @@
 # 零樣本、少樣本與指令提示的區別
 
-> 一句話版本：Zero-shot 與 Few-shot 是**範例數量**的維度；Instruction prompting 是**指令完整度**的維度。兩者正交、可自由組合——搞清楚這個區別，才能有系統地排查 prompt 問題。
+> 一句話版本：Zero-shot 與 Few-shot 是**範例數量**的維度；Instruction prompting 是**指令完整度**的維度。兩者正交、可自由組合 —— 搞清楚這個區別，才能有系統地排查 prompt 問題。
 
 ## Step 1：兩個不同維度
 
@@ -17,7 +17,7 @@ flowchart LR
     C --> G["角色、任務範圍、輸出格式、<br>約束條件、退路 → instruction prompting"]
 ```
 
-## Step 2：維度 1——範例數量（zero-shot / few-shot）
+## Step 2：維度 1—— 範例數量（zero-shot /few-shot）
 
 | 模式 | 範例數 | 模型依賴什麼 |
 |------|--------|------------|
@@ -58,7 +58,7 @@ Instruction prompting 不是「給幾個範例」，而是一種**寫法風格**
 | 約束條件 | 排除不要做的事 | 「只看函式本身，不要猜測呼叫端行為」 |
 | 退路 | 資料不足時的處理方式 | 「沒有問題時輸出 LGTM」 |
 
-現代 **instruction-tuned 模型**（Claude、GPT-4、Llama-3 Instruct）對這種風格特別有效，因為 SFT/RLHF 訓練就是用「指令 → 理想回應」的配對資料微調的——模型本來就被訓練成「乖乖遵照清楚指令」。
+現代 **instruction-tuned 模型**（Claude、GPT-4、Llama-3 Instruct）對這種風格特別有效，因為 SFT/RLHF 訓練就是用「指令 → 理想回應」的配對資料微調的 —— 模型本來就被訓練成「乖乖遵照清楚指令」。
 
 ## Step 4：組合方式與實務建議
 

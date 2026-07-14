@@ -9,13 +9,13 @@
 1. **無法平行化**：第 t 個字的計算依賴第 t-1 個字的結果，序列越長訓練越慢。
 2. **長距離依賴會衰減**：句子開頭的資訊要一路傳遞到結尾，途中不斷被壓縮、遺忘。
 
-Transformer 的核心想法是：與其讓資訊「接力傳遞」，不如讓**每個 token 直接看到所有其他 token**，關聯強度由模型自己學出來——這就是 attention。
+Transformer 的核心想法是：與其讓資訊「接力傳遞」，不如讓**每個 token 直接看到所有其他 token**，關聯強度由模型自己學出來 —— 這就是 attention。
 
 ## Step 2：輸入怎麼變成模型能算的東西
 
 1. **Tokenization**：把文字切成 token（常用 BPE 這類 subword 演算法），每個 token 對應一個整數 ID。
 2. **Embedding**：每個 token ID 查表換成一個高維向量（例如 4096 維）。
-3. **位置資訊**：attention 本身不在乎順序，所以要額外注入位置訊號——早期用固定的 positional encoding，現代 LLM 多用 RoPE（rotary position embedding）。
+3. **位置資訊**：attention 本身不在乎順序，所以要額外注入位置訊號 —— 早期用固定的 positional encoding，現代 LLM 多用 RoPE（rotary position embedding）。
 
 到這裡，一句話就變成了一個「token 數 × 維度」的矩陣。
 
@@ -25,9 +25,9 @@ Transformer 的核心想法是：與其讓資訊「接力傳遞」，不如讓**
 
 | 角色 | 直覺意義 |
 |------|----------|
-| Query(Q) | 我在找什麼資訊？|
-| Key(K) | 我能提供什麼資訊？|
-| Value(V) | 我實際攜帶的內容 |
+| Query (Q) | 我在找什麼資訊？|
+| Key (K) | 我能提供什麼資訊？|
+| Value (V) | 我實際攜帶的內容 |
 
 計算步驟：
 
@@ -67,7 +67,7 @@ flowchart LR
     E -- "是" --> F["輸出完成"]
 ```
 
-（這個迴圈裡每一步都要重算歷史 token 的 K、V，所以實務上會用 KV cache 來避免重複計算——這是推理優化章節的主題。）
+（這個迴圈裡每一步都要重算歷史 token 的 K、V，所以實務上會用 KV cache 來避免重複計算 —— 這是推理優化章節的主題。）
 
 ## 小結
 

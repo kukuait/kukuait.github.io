@@ -1,6 +1,6 @@
 # Prompt 驅動的 JSON 輸出技巧
 
-> Prompt 無法 100% 保證格式，但有幾個技巧可以大幅提高命中率——搭配後處理驗證才算完整。
+> Prompt 無法 100% 保證格式，但有幾個技巧可以大幅提高命中率 —— 搭配後處理驗證才算完整。
 
 ## 前置認知：Prompt 是 Soft Constraint
 
@@ -38,7 +38,7 @@ messages = [
 ]
 ```
 
-注意：assistant 範例的內容就是純 JSON，沒有多餘文字——模型會學這個模式。
+注意：assistant 範例的內容就是純 JSON，沒有多餘文字 —— 模型會學這個模式。
 
 ## 技巧 3：Output Template（最有效的 prompt 技巧）
 
@@ -78,7 +78,7 @@ def extract_json(raw：str) -> dict:
         pass
 
     # 嘗試從 code fence 中擷取
-    match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', raw, re.DOTALL)
+    match = re.search(r'```(?:JSON)?\s*(\{.*?\})\s*```', raw, re.DOTALL)
     if match:
         return json.loads(match.group(1))
 

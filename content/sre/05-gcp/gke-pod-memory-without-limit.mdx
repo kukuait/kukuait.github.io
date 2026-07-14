@@ -8,8 +8,8 @@
 
 | | Request | Limit |
 |---|---|---|
-| CPU | 映射到 `cpu.shares`(cgroup v1)/ `cpu.weight`（v2）——是「相對權重」，決定資源競爭時分到多少，**不是硬上限** | 映射到 `cpu.cfs_quota_us` / `cpu.max`——是硬上限，會被 throttle |
-| Memory | **只用來排程與計算 OOM 分數，底層完全沒有對應的 cgroup 設定** | 映射到 `memory.max`(cgroup v2)/ `memory.limit_in_bytes`（v1）——是硬上限，超過就被 OOM kill |
+| CPU | 映射到 `cpu.shares`(cgroup v1)/ `cpu.weight`（v2）—— 是「相對權重」，決定資源競爭時分到多少，**不是硬上限** | 映射到 `cpu.cfs_quota_us` / `cpu.max`—— 是硬上限，會被 throttle |
+| Memory | **只用來排程與計算 OOM 分數，底層完全沒有對應的 cgroup 設定** | 映射到 `memory.max`(cgroup v2)/ `memory.limit_in_bytes`（v1）—— 是硬上限，超過就被 OOM kill |
 
 也就是說：
 
@@ -45,18 +45,18 @@ flowchart TD
 有兩種 OOM 機制會介入，層級不同：
 
 1. **kubelet node-pressure eviction（軟性，節點層級預防）**
-   當 Node 可用記憶體低於 eviction threshold 時，kubelet 會主動驅逐（evict）Pod，而不是等 kernel 出手。驅逐順序的邏輯是：
-   - QoS class 低的先評（`BestEffort` > `Burstable` > `Guaranteed`）
-   - 同 QoS class 內，**實際用量超過 request 的比例越高，越先被驅逐**
+當 Node 可用記憶體低於 eviction threshold 時，kubelet 會主動驅逐（evict）Pod，而不是等 kernel 出手。驅逐順序的邏輯是：
+- QoS class 低的先評（`BestEffort` > `Burstable` > `Guaranteed`）
+- 同 QoS class 內，**實際用量超過 request 的比例越高，越先被驅逐**
 
 2. **kernel OOM killer（硬性，系統層級最後手段）**
-   如果記憶體壓力來得太快，kubelet 來不及反應，kernel 會直接依 `oom_score_adj` 選一個 process 砍掉。K8s 給 Burstable Pod 的計分公式大致是：
+如果記憶體壓力來得太快，kubelet 來不及反應，kernel 會直接依 `oom_score_adj` 選一個 process 砍掉。K8s 給 Burstable Pod 的計分公式大致是：
 
 $$
 \text{oom\_score\_adj} = \max\left(2,\ \min\left(999,\ 1000 - \frac{1000 \times \text{memoryRequestBytes}}{\text{nodeMemoryCapacityBytes}}\right)\right)
 $$
 
-   直覺理解：**request 設得越小，oom_score_adj 越高，越容易被優先砍**。這裡的重點是——這個 Pod 因為 request 只設 10Gi（相對節點記憶體可能是個小比例），一旦它把記憶體撐到很大，在系統 OOM 時反而是「優先被犧牲」的對象，而不是被保護的對象。
+直覺理解：**request 設得越小，oom_score_adj 越高，越容易被優先砍**。這裡的重點是 —— 這個 Pod 因為 request 只設 10Gi（相對節點記憶體可能是個小比例），一旦它把記憶體撐到很大，在系統 OOM 時反而是「優先被犧牲」的對象，而不是被保護的對象。
 
 ## Step 4：這個設定對應的 QoS Class 是什麼
 
@@ -68,7 +68,7 @@ Kubernetes 依 request/limit 的設定組合分三種 QoS class:
 | `Burstable` | 至少一個 container 設了 request 或 limit，但不滿足 `Guaranteed` 條件 | 排程有基本保障，但可以往上超用，超用越多越先被砍 |
 | `BestEffort` | 完全沒設 request/limit | 最先被驅逐 |
 
-題目中的設定（只有 `requests.memory: 10Gi`，沒有 `limits.memory`）屬於 **`Burstable`**——排程器保證至少有 10Gi 可用，但實際用量不受 10Gi 約束，可以無上限往上「burst」，直到撞到 Node 邊界。
+題目中的設定（只有 `requests.memory: 10Gi`，沒有 `limits.memory`）屬於 **`Burstable`**—— 排程器保證至少有 10Gi 可用，但實際用量不受 10Gi 約束，可以無上限往上「burst」，直到撞到 Node 邊界。
 
 ## Step 5：為什麼這在生產環境是個風險（SRE 視角）
 

@@ -1,8 +1,8 @@
 # Token 與 API 計費模型
 
-> 一句話版本：token 是 LLM 處理文字的最小單位——比「字元」大、通常比「單字」小的子詞 (subword) 片段；API 計費就是數 token：輸入 (input) 與輸出 (output) 分開計價、以「每百萬 token」為單位，輸出通常比輸入貴 3~5 倍。
+> 一句話版本：token 是 LLM 處理文字的最小單位 —— 比「字元」大、通常比「單字」小的子詞 (subword) 片段；API 計費就是數 token：輸入 (input) 與輸出 (output) 分開計價、以「每百萬 token」為單位，輸出通常比輸入貴 3~5 倍。
 
-## Step 1：為什麼需要 token？——字元太碎，單字太多
+## Step 1：為什麼需要 token？—— 字元太碎，單字太多
 
 模型不能直接吃原始文字，必須先把文字切成有限集合裡的單位，才能查表（embedding）變成向量。兩個極端都不好：
 
@@ -11,7 +11,7 @@
 | 一個字元一個單位 | 詞彙表小，但序列超長、每個單位資訊量太低 |
 | 一個單字一個單位 | 詞彙表爆炸 （所有語言所有變形），還會遇到沒見過的新字 (OOV) |
 
-**Subword tokenization** 是折衷：常見的字串合併成一個 token，罕見的字拆成多個小片段。主流演算法是 **BPE (Byte Pair Encoding)**——從單一 byte 出發，反覆把語料中最常相鄰出現的 pair 合併成新 token，直到詞彙表到達目標大小 （常見 3 萬~20 萬）。
+**Subword tokenization** 是折衷：常見的字串合併成一個 token，罕見的字拆成多個小片段。主流演算法是 **BPE (Byte Pair Encoding)**—— 從單一 byte 出發，反覆把語料中最常相鄰出現的 pair 合併成新 token，直到詞彙表到達目標大小 （常見 3 萬～20 萬）。
 
 ```text
 "tokenization"   → ["token", "ization"]        (2 tokens)
@@ -20,7 +20,7 @@
 "今天天氣很好"    → ["今天", "天", "氣", "很", "好"] (中文通常 1 字 ≈ 1~2 tokens)
 ```
 
-經驗值：**英文約 1 個單字 ≈ 1.3 tokens；中文約 1 個字 ≈ 1~2 tokens**。同一段意思，中文常比英文吃掉更多 token——這直接影響成本。
+經驗值：**英文約 1 個單字 ≈ 1.3 tokens；中文約 1 個字 ≈ 1~2 tokens**。同一段意思，中文常比英文吃掉更多 token—— 這直接影響成本。
 
 注意兩點：
 
@@ -35,8 +35,8 @@ $$
 \text{cost} = \frac{\text{input tokens}}{10^6} \times P_{in} + \frac{\text{output tokens}}{10^6} \times P_{out}
 $$
 
-- **Input tokens**：你送進去的所有東西——system prompt、對話歷史、工具定義、文件內容。
-- **Output tokens**：模型生成的所有東西——包含看不見的 **thinking （推理）token 也算 output 計費**。
+- **Input tokens**：你送進去的所有東西 ——system prompt、對話歷史、工具定義、文件內容。
+- **Output tokens**：模型生成的所有東西 —— 包含看不見的 **thinking （推理）token 也算 output 計費**。
 - **輸出比輸入貴 3~5 倍**：生成是逐 token 自迴歸解碼，每個 token 都要跑一次完整 forward pass；輸入則可以一次平行處理。
 
 以 Anthropic 目前的定價為例 （每百萬 token，2026-06）：
@@ -48,7 +48,7 @@ $$
 | Claude Sonnet 4.6 | `$3.00` | `$15.00` |
 | Claude Haiku 4.5 | `$1.00` | `$5.00` |
 
-另一個隱藏成本：API 是**無狀態**的，多輪對話每一輪都要把完整歷史重新送進去——對話越長，每輪的 input token 越多，成本呈平方級成長。這也是下一步省錢機制存在的原因。
+另一個隱藏成本：API 是**無狀態**的，多輪對話每一輪都要把完整歷史重新送進去 —— 對話越長，每輪的 input token 越多，成本呈平方級成長。這也是下一步省錢機制存在的原因。
 
 ## Step 3：三個主要省錢機制
 
@@ -58,7 +58,7 @@ $$
 | **Batch API** | 不急的請求批次送，異步處理（通常 1 小時內完成） | 全部 token **5 折** |
 | **選對模型** | 簡單任務（分類、抽取）用小模型 | Haiku vs Fable 5 差 10 倍以上 |
 
-Prompt caching 是**前綴匹配**：前綴中任何一個 byte 改變（例如 system prompt 裡塞了時間戳），之後的快取全部失效——所以穩定內容放前面、每次都變的內容放最後。
+Prompt caching 是**前綴匹配**：前綴中任何一個 byte 改變（例如 system prompt 裡塞了時間戳），之後的快取全部失效 —— 所以穩定內容放前面、每次都變的內容放最後。
 
 ## Step 4：如何事先估算？
 
