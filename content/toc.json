@@ -431,7 +431,21 @@
           "id": "03-operations",
           "title": "維運實務",
           "description": "部署、放量、回滾、容量規劃",
-          "sections": []
+          "sections": [
+            {
+              "id": "cluster-migration",
+              "title": "叢集遷移與流量切換",
+              "notes": [
+                {
+                  "id": "gke-cluster-migration-ingress-cutover",
+                  "title": "GKE 跨叢集遷移時 Ingress 外部 IP 切換的風險與正確做法",
+                  "file": "sre/03-operations/gke-cluster-migration-ingress-cutover.mdx",
+                  "date": "2026-07-14",
+                  "tags": ["gke", "gcp", "ingress", "static-ip", "cluster-migration", "cutover", "dns", "multi-cluster-ingress", "zero-downtime", "managed-certificate"]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "04-incident",
