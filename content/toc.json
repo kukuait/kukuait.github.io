@@ -172,6 +172,19 @@
               ]
             },
             {
+              "id": "agent",
+              "title": "Agent 協作",
+              "notes": [
+                {
+                  "id": "ai-agent-collaboration-modes",
+                  "title": "AI Agent 三種分工模式",
+                  "file": "llm/04-applications/ai-agent-collaboration-modes.mdx",
+                  "date": "2026-07-14",
+                  "tags": ["agent", "multi-agent", "subagent", "agent-teams", "dynamic-workflow", "orchestrator", "pipeline", "agentic"]
+                }
+              ]
+            },
+            {
               "id": "api",
               "title": "API 基礎",
               "notes": [
