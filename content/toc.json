@@ -513,8 +513,8 @@
                   "id": "gcp-uptime-checks-and-alerting",
                   "title": "GCP Cloud Monitoring 的 Uptime Checks 與 Alerting 功能",
                   "file": "sre/05-gcp/gcp-uptime-checks-and-alerting.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["gcp", "cloud-monitoring", "uptime-check", "alerting-policy", "notification-channel", "black-box-monitoring", "incident", "slo", "observability"]
+                  "date": "2026-07-15",
+                  "tags": ["gcp", "cloud-monitoring", "uptime-check", "alerting-policy", "notification-channel", "black-box-monitoring", "incident", "slo", "observability", "cloud-scheduler", "time-window", "scheduling"]
                 },
                 {
                   "id": "otel-gcp-gke-case-study",

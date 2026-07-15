@@ -100,6 +100,29 @@ sequenceDiagram
 
 沒有第 2 步，即使 alerting policy 的 condition 正確觸發、incident 也確實開了，也不會有任何人收到通知 —— 這是排查「uptime check 明明掉了但沒人被吵醒」時第一個要檢查的地方：**policy 有沒有掛 notification channel、channel 本身有沒有驗證通過（例如 email/SMS 需要先完成一次驗證流程才會生效）**。
 
+## Step 5：Uptime Check 能不能只在特定時段檢測
+
+答案是**不行**——uptime check 資源沒有時間排程欄位,只要建立了就會依設定的頻率全年無休地探測。想要「只在 09:00~18:00 檢測 `/healthz`」這種效果,實際上要控制的是**告警要不要通知人**,而不是探測本身,有兩種做法:
+
+1. **排程開關 Alerting Policy**：uptime check 照常 24 小時探測,改用 Cloud Scheduler 在時段起訖點呼叫 Monitoring API,把對應 alerting policy 的 `enabled` 欄位在 09:00 設 `true`、18:00 設 `false`。policy disabled 期間即使探測失敗也不會開 incident、不會發通知。
+
+   ```bash
+   # 09:00 觸發
+   gcloud alpha monitoring policies update POLICY_ID --enabled
+   # 18:00 觸發
+   gcloud alpha monitoring policies update POLICY_ID --no-enabled
+   ```
+
+2. **通知層過濾**：policy 保持一直 enabled,但 notification channel 不直接接 Slack/PagerDuty,而是先接 Pub/Sub → 一個小的 Cloud Function,由 function 檢查目前時間是否落在時段內,是才轉發給真正的通知管道。適合「還想保留完整 incident 歷史做事後分析,只是不想在非時段吵人」的情境。
+
+| | 排程 enable/disable policy | 通知層過濾 |
+|---|---|---|
+| 實作複雜度 | 低(兩個 Cloud Scheduler job + API 呼叫) | 中(要維護一個轉發 function) |
+| Incident 記錄 | 非時段內完全不會產生 incident | 非時段內仍會產生 incident,只是不轉發通知 |
+| 適用情境 | 只想控制「什麼時候吵人」 | 還想保留完整 incident 歷史 |
+
+如果 `/healthz` 在非時段本來就會回應失敗(例如服務本身會 scale to zero),問題其實是這個 endpoint 的語意不適合用一般 uptime check 去理解——通常直接接受「該時段本就預期失敗」,靠上述兩種做法把告警噪音關掉,而不是嘗試讓探測本身暫停(GCP 沒有提供這個開關)。
+
 ## 兩者的本質差異
 
 | | Uptime Check | Alerting |
