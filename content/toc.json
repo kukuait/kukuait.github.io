@@ -405,7 +405,21 @@
           "id": "01-reliability",
           "title": "可靠性基礎",
           "description": "SLI/SLO、error budget、可用性設計",
-          "sections": []
+          "sections": [
+            {
+              "id": "slo-engineering",
+              "title": "SLO 工程",
+              "notes": [
+                {
+                  "id": "sla-slo-sli",
+                  "title": "SLA、SLO 與 SLI 的核心概念與設計實踐",
+                  "file": "sre/01-reliability/sla-slo-sli.mdx",
+                  "date": "2026-07-15",
+                  "tags": ["sla", "slo", "sli", "error-budget", "availability", "latency", "reliability", "sre"]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "02-observability",
