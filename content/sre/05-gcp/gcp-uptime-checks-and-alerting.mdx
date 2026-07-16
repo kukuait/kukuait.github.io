@@ -123,6 +123,24 @@ sequenceDiagram
 
 如果 `/healthz` 在非時段本來就會回應失敗(例如服務本身會 scale to zero),問題其實是這個 endpoint 的語意不適合用一般 uptime check 去理解——通常直接接受「該時段本就預期失敗」,靠上述兩種做法把告警噪音關掉,而不是嘗試讓探測本身暫停(GCP 沒有提供這個開關)。
 
+## Step 6：Snooze 與 Incident 的差異
+
+Incident（見 Step 2–4）是「alerting policy 的 condition 從滿足到恢復」這段期間的紀錄本身：policy 每觸發一次就生一個新的 incident，結束方式是條件恢復後自動 close，或值班人員手動 acknowledge/close。
+
+Snooze 是另一個獨立資源：在指定的時間窗口內，暫停某些 alerting policy 觸發時的**通知**，但不影響 incident 是否照常產生。一句話比較：
+
+**Incident 回答「發生了什麼」；Snooze 回答「這段時間要不要吵醒人」。**
+
+|  | Incident | Snooze |
+|---|---|---|
+| 本質 | Alerting Policy 觸發後產生的事件紀錄 | 一段時間窗口內、對指定 policy 的通知抑制規則 |
+| 誰觸發 | Condition 滿足時系統自動建立 | 人工手動建立（例如已知維護窗口、正在處理同一個根因、告警太吵想先靜音再調參數） |
+| 對歷史紀錄的影響 | 本身就是歷史紀錄 | 不影響 incident 是否產生，只抑制新增的通知 |
+| 生命週期 | Condition 恢復 → 自動 close，或手動 acknowledge/close | 到期時間一到自動失效，也可手動提前結束 |
+| 適用情境 | 追蹤「這次異常從什麼時候到什麼時候」 | 「我知道現在會觸發，不需要再通知我」 |
+
+跟 Step 5 提到的時段控制通知相比，Snooze 是 GCP 原生提供的做法：直接在 Alerting 頁面建立一個 Snooze，指定要 mute 的 policy 與起訖時間即可，不用像 Step 5 方案二那樣自己搭 Pub/Sub + Cloud Function 做轉發過濾。而且 Snooze 期間 incident 仍照常產生、歷史紀錄完整，這點跟 Step 5 方案一「直接把 policy disable」不同——disable 期間連 incident 都不會生，事後無法回頭確認那段時間到底觸發過幾次；Snooze 則是「事件照樣記錄，只是不吵人」，更適合事後要做 postmortem 或計算 error budget 消耗的場景。
+
 ## 兩者的本質差異
 
 | | Uptime Check | Alerting |

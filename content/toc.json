@@ -359,6 +359,19 @@
                   "tags": ["grpc", "protobuf", "rpc", "http2", "streaming", "api-design", "microservices", "idl"]
                 }
               ]
+            },
+            {
+              "id": "architecture-patterns",
+              "title": "架構模式",
+              "notes": [
+                {
+                  "id": "hub-and-spoke-architecture",
+                  "title": "Hub-and-Spoke 架構模式：集中協調的星狀拓撲",
+                  "file": "swe/01-system-design/hub-and-spoke-architecture.mdx",
+                  "date": "2026-07-16",
+                  "tags": ["hub-and-spoke", "topology", "architecture-pattern", "network-topology", "orchestrator", "vpc", "scalability", "spof"]
+                }
+              ]
             }
           ]
         },
@@ -416,6 +429,13 @@
                   "file": "sre/01-reliability/sla-slo-sli.mdx",
                   "date": "2026-07-15",
                   "tags": ["sla", "slo", "sli", "error-budget", "availability", "latency", "reliability", "sre"]
+                },
+                {
+                  "id": "sli-slo-with-otel-fastapi-gke",
+                  "title": "在 GKE FastAPI 服務上以 OpenTelemetry 落地 SLI/SLO 量測",
+                  "file": "sre/01-reliability/sli-slo-with-otel-fastapi-gke.mdx",
+                  "date": "2026-07-16",
+                  "tags": ["slo", "sli", "opentelemetry", "fastapi", "gke", "managed-prometheus", "promql", "red-method", "error-budget", "burn-rate", "cloud-monitoring"]
                 }
               ]
             }
@@ -527,8 +547,8 @@
                   "id": "gcp-uptime-checks-and-alerting",
                   "title": "GCP Cloud Monitoring 的 Uptime Checks 與 Alerting 功能",
                   "file": "sre/05-gcp/gcp-uptime-checks-and-alerting.mdx",
-                  "date": "2026-07-15",
-                  "tags": ["gcp", "cloud-monitoring", "uptime-check", "alerting-policy", "notification-channel", "black-box-monitoring", "incident", "slo", "observability", "cloud-scheduler", "time-window", "scheduling"]
+                  "date": "2026-07-16",
+                  "tags": ["gcp", "cloud-monitoring", "uptime-check", "alerting-policy", "notification-channel", "black-box-monitoring", "incident", "snooze", "slo", "observability", "cloud-scheduler", "time-window", "scheduling"]
                 },
                 {
                   "id": "otel-gcp-gke-case-study",
