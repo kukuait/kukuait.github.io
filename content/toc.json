@@ -511,7 +511,21 @@
           "id": "04-incident",
           "title": "事故處理",
           "description": "On-call、事故分級、postmortem",
-          "sections": []
+          "sections": [
+            {
+              "id": "on-call-tooling",
+              "title": "On-call 工具與流程",
+              "notes": [
+                {
+                  "id": "what-is-pagerduty",
+                  "title": "PagerDuty：On-Call 事件管理平台的核心概念與運作機制",
+                  "file": "sre/04-incident/what-is-pagerduty.mdx",
+                  "date": "2026-07-16",
+                  "tags": ["pagerduty", "on-call", "incident-management", "escalation-policy", "alert-fatigue", "event-orchestration", "mttr", "mtta", "postmortem", "alertmanager", "cloud-monitoring"]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "05-gcp",
@@ -602,6 +616,19 @@
                   "file": "sre/05-gcp/k8s-cronjob-vs-cloud-scheduler.mdx",
                   "date": "2026-07-13",
                   "tags": ["gcp", "gke", "cloud-scheduler", "kubernetes", "cronjob", "scheduling", "pub-sub", "cloud-run", "concurrency-policy", "dead-mans-switch", "idempotency", "reliability"]
+                }
+              ]
+            },
+            {
+              "id": "messaging",
+              "title": "訊息與事件",
+              "notes": [
+                {
+                  "id": "gcp-pubsub-overview",
+                  "title": "GCP Pub/Sub 的架構與核心概念",
+                  "file": "sre/05-gcp/gcp-pubsub-overview.mdx",
+                  "date": "2026-07-16",
+                  "tags": ["gcp", "pub-sub", "messaging", "event-driven", "pull", "push", "ordering-key", "exactly-once", "dead-letter-topic", "iam"]
                 }
               ]
             }
