@@ -141,6 +141,85 @@ Snooze 是另一個獨立資源：在指定的時間窗口內，暫停某些 ale
 
 跟 Step 5 提到的時段控制通知相比，Snooze 是 GCP 原生提供的做法：直接在 Alerting 頁面建立一個 Snooze，指定要 mute 的 policy 與起訖時間即可，不用像 Step 5 方案二那樣自己搭 Pub/Sub + Cloud Function 做轉發過濾。而且 Snooze 期間 incident 仍照常產生、歷史紀錄完整，這點跟 Step 5 方案一「直接把 policy disable」不同——disable 期間連 incident 都不會生，事後無法回頭確認那段時間到底觸發過幾次；Snooze 則是「事件照樣記錄，只是不吵人」，更適合事後要做 postmortem 或計算 error budget 消耗的場景。
 
+## Step 7：Uptime Check 能不能測試需要 OIDC Token 的 endpoint
+
+能，但僅限於「目標端點驗證的是 Google 簽發的 OIDC identity token」這一種情境，靠的是 Uptime Check 設定裡的 **Service Agent Authentication** 選項——這個選項只在 HTTPS check 才看得到。
+
+啟用後，每次探測前 Cloud Monitoring 會自動幫一個專屬的 monitoring service agent 產生一張 Google 簽發的 identity token：
+
+```text
+service agent：service-PROJECT_NUMBER@gcp-sa-monitoring-notification.iam.gserviceaccount.com
+token issuer （iss）：https://accounts.google.com
+token audience （aud）：自動等於你填的目標 URL
+```
+
+這張 token 會以 `Authorization: Bearer <token>` header 的形式跟著探測請求一起送出。你的服務端驗證方式跟一般 Google OIDC token 完全一樣——用 `google-auth` 套件的 `id_token.verify_oauth2_token()` 檢查簽章、`iss`、`aud` 即可，這正是〔[GCP Alerting Policy → Pub/Sub → 自訂 Webhook 完整串接](#/sre/99-staging/gcp-alerting-pubsub-webhook.mdx)〕裡驗證 Pub/Sub push OIDC token 的同一套手法。
+
+如果目標是 Cloud Run 或 Cloud Functions（gen2）這種**平台層本身就用 IAM 做 invoker 檢查**的服務，光是應用程式碼會驗證 token 還不夠，必須另外把 `roles/run.invoker` 授權給這個 monitoring service agent 的 email，否則請求在平台層就被擋下 403，根本進不到你的程式碼。
+
+### 各種驗證需求對照表
+
+| 目標端點的驗證需求 | Uptime Check 能不能測 | 怎麼設定 |
+|---|---|---|
+| 公開、無驗證 | 可以 | 預設 HTTP/HTTPS check |
+| 固定的 API key／static Bearer token | 可以 | Custom headers（可加密隱藏值） |
+| Basic Auth（帳號密碼） | 可以 | Authentication 欄位選 Basic |
+| 需要 Google 簽發、audience 等於目標 URL 的 OIDC token（如 Cloud Run IAM 保護） | 可以 | Authentication 欄位選 Service Agent Authentication，僅 HTTPS |
+| 第三方 OIDC provider 動態核發、audience 需自訂的 token | 不行 | 沒有原生支援，見下方 |
+
+### 這個機制的限制
+
+- **身份固定**：只能用這個固定的 monitoring service agent，不能像 Cloud Scheduler 的 OIDC 設定那樣指定「用哪個自訂 service account 產生 token」。
+- **audience 不可自訂**：`aud` 固定等於你填的目標 URL，如果驗證邏輯要求別的 audience 值，就永遠對不上。
+- **跟 custom header 互斥**：Authentication 欄位設了 Service Agent Authentication，就不能再自己手動加 `Authorization` header，兩者同時設定會直接噴 `Invalid Argument` 錯誤。
+- **TCP check 不支援**：這個選項只存在於 HTTPS check。
+
+如果你的 endpoint 要驗證的是第三方 OIDC provider（非 Google）核發、且 audience 需要自訂的 token，Uptime Check 本身無法產生這種 token，只能退而求其次：改用 **Synthetic Monitor**（本質是讓你自己寫一段 Cloud Function 當探測邏輯），在 function 裡自己走完整套換票流程再打目標 endpoint，缺點是要多維護一段程式碼，換來的是驗證流程完全不受限於 Uptime Check 內建的這幾種選項。
+
+### 主控台看不到 Service Agent Authentication 選項時，先檢查這兩件事
+
+這個選項**只在 Protocol 設為 HTTPS 時才會出現**，是排查「Console 建立畫面的 Authentication 沒有這個選項」時第一個要確認的地方：
+
+1. **Protocol 選錯**：Uptime check 的 target 步驟裡，Protocol 選的是 HTTP 或 TCP，Authentication 這個子區塊本身就不會顯示 Service Agent Authentication；TCP 甚至整個 Authentication 區塊都不會出現。把 Protocol 切回 HTTPS 再看一次。
+2. **看錯步驟**：Authentication 是在填完 hostname／path 之後、同一頁的「更多 target 選項（More target options）」裡才會展開，不是獨立的頁籤，容易被忽略而以為選項不存在。
+
+如果 Protocol 已經是 HTTPS、也確認展開了 more target options，Console 裡卻還是只看到 Basic Authentication，可以直接改用 gcloud 或 Terraform 建立／更新這個 uptime check config，兩者對應的欄位是 `httpCheck.serviceAgentAuthentication.type = OIDC_TOKEN`：
+
+```hcl
+resource "google_monitoring_uptime_check_config" "healthz" {
+  display_name = "healthz-oidc"
+  timeout      = "10s"
+
+  http_check {
+    path         = "/healthz"
+    port         = "443"
+    use_ssl      = true
+    validate_ssl = true
+
+    service_agent_authentication {
+      type = "OIDC_TOKEN"
+    }
+  }
+
+  monitored_resource {
+    type = "uptime_url"
+    labels = {
+      project_id = "my-project"
+      host       = "example.com"
+    }
+  }
+}
+```
+
+若目標是 Cloud Run，記得同時把 `roles/run.invoker` 授權給 monitoring service agent（`service-PROJECT_NUMBER@gcp-sa-monitoring-notification.iam.gserviceaccount.com`），這一步 Console／Terraform 都不會幫你自動做：
+
+```bash
+gcloud run services add-iam-policy-binding my-service \
+  --region=asia-east1 \
+  --member="serviceAccount:service-PROJECT_NUMBER@gcp-sa-monitoring-notification.iam.gserviceaccount.com" \
+  --role="roles/run.invoker"
+```
+
 ## 兩者的本質差異
 
 | | Uptime Check | Alerting |

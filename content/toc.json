@@ -181,6 +181,13 @@
                   "file": "llm/04-applications/ai-agent-collaboration-modes.mdx",
                   "date": "2026-07-14",
                   "tags": ["agent", "multi-agent", "subagent", "agent-teams", "dynamic-workflow", "orchestrator", "pipeline", "agentic"]
+                },
+                {
+                  "id": "what-is-langgraph",
+                  "title": "LangGraph：以圖為核心的 LLM Agent 編排框架",
+                  "file": "llm/04-applications/what-is-langgraph.mdx",
+                  "date": "2026-07-17",
+                  "tags": ["langgraph", "langchain", "agent", "state-machine", "multi-agent", "checkpointer", "human-in-the-loop", "orchestration"]
                 }
               ]
             },
@@ -522,6 +529,13 @@
                   "file": "sre/04-incident/what-is-pagerduty.mdx",
                   "date": "2026-07-16",
                   "tags": ["pagerduty", "on-call", "incident-management", "escalation-policy", "alert-fatigue", "event-orchestration", "mttr", "mtta", "postmortem", "alertmanager", "cloud-monitoring"]
+                },
+                {
+                  "id": "incident-io-vs-pagerduty",
+                  "title": "incident.io 與 PagerDuty 的深度比較：事故管理工具選型指南",
+                  "file": "sre/04-incident/incident-io-vs-pagerduty.mdx",
+                  "date": "2026-07-17",
+                  "tags": ["incident-io", "pagerduty", "incident-management", "on-call", "escalation-policy", "postmortem", "workflow-automation", "chatops", "tool-comparison"]
                 }
               ]
             }
@@ -561,8 +575,8 @@
                   "id": "gcp-uptime-checks-and-alerting",
                   "title": "GCP Cloud Monitoring 的 Uptime Checks 與 Alerting 功能",
                   "file": "sre/05-gcp/gcp-uptime-checks-and-alerting.mdx",
-                  "date": "2026-07-16",
-                  "tags": ["gcp", "cloud-monitoring", "uptime-check", "alerting-policy", "notification-channel", "black-box-monitoring", "incident", "snooze", "slo", "observability", "cloud-scheduler", "time-window", "scheduling"]
+                  "date": "2026-07-17",
+                  "tags": ["gcp", "cloud-monitoring", "uptime-check", "alerting-policy", "notification-channel", "black-box-monitoring", "incident", "snooze", "slo", "observability", "cloud-scheduler", "time-window", "scheduling", "oidc", "service-agent-authentication", "identity-token", "terraform", "run-invoker"]
                 },
                 {
                   "id": "otel-gcp-gke-case-study",
