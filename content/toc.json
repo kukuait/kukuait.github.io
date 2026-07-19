@@ -661,6 +661,19 @@
               ]
             },
             {
+              "id": "iac",
+              "title": "Infrastructure as Code",
+              "notes": [
+                {
+                  "id": "terraform-gcp-overview",
+                  "title": "Terraform 與 GCP 的整合：Infrastructure as Code 實踐",
+                  "file": "sre/05-gcp/terraform-gcp-overview.mdx",
+                  "date": "2026-07-19",
+                  "tags": ["terraform", "gcp", "iac", "infrastructure-as-code", "hcl", "provider", "state", "compute-engine", "vpc", "iam", "gcs", "cloud-sql", "gke", "cloud-run", "module"]
+                }
+              ]
+            },
+            {
               "id": "messaging",
               "title": "訊息與事件",
               "notes": [
