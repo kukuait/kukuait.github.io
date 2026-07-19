@@ -471,6 +471,13 @@
               "title": "指標監控",
               "notes": [
                 {
+                  "id": "latency-percentiles",
+                  "title": "P50 / P95 / P99 百分位延遲的意義與監控應用",
+                  "file": "sre/02-observability/latency-percentiles.mdx",
+                  "date": "2026-07-18",
+                  "tags": ["percentile", "latency", "p99", "histogram", "prometheus", "slo", "long-tail", "observability", "alerting"]
+                },
+                {
                   "id": "prometheus-and-grafana-overview",
                   "title": "Prometheus 與 Grafana 的功能與協作方式",
                   "file": "sre/02-observability/prometheus-and-grafana-overview.mdx",
@@ -625,11 +632,31 @@
                   "tags": ["gke", "gcp", "kubernetes", "memory", "requests", "limits", "qos-class", "oom-killer", "cgroup", "capacity-planning"]
                 },
                 {
+                  "id": "cloud-scheduler-timeout",
+                  "title": "GCP Cloud Scheduler 的 Timeout 限制與配置",
+                  "file": "sre/05-gcp/cloud-scheduler-timeout.mdx",
+                  "date": "2026-07-19",
+                  "tags": ["gcp", "cloud-scheduler", "timeout", "attempt-deadline", "retry", "cloud-run", "scheduling", "idempotency"]
+                },
+                {
                   "id": "k8s-cronjob-vs-cloud-scheduler",
                   "title": "Kubernetes CronJob 與 GCP Cloud Scheduler 的差異與選型",
                   "file": "sre/05-gcp/k8s-cronjob-vs-cloud-scheduler.mdx",
                   "date": "2026-07-13",
                   "tags": ["gcp", "gke", "cloud-scheduler", "kubernetes", "cronjob", "scheduling", "pub-sub", "cloud-run", "concurrency-policy", "dead-mans-switch", "idempotency", "reliability"]
+                }
+              ]
+            },
+            {
+              "id": "ai-platform",
+              "title": "AI 平台",
+              "notes": [
+                {
+                  "id": "gcp-vertex-ai-overview",
+                  "title": "GCP Vertex AI 平台總覽",
+                  "file": "sre/05-gcp/gcp-vertex-ai-overview.mdx",
+                  "date": "2026-07-19",
+                  "tags": ["gcp", "vertex-ai", "gemini", "llm", "mlops", "model-garden", "rag-engine", "agent-builder", "custom-training", "batch-prediction", "ai-platform"]
                 }
               ]
             },
