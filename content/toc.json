@@ -412,7 +412,21 @@
           "id": "04-delivery",
           "title": "開發流程",
           "description": "CI/CD、版本控制、code review、工程效率",
-          "sections": []
+          "sections": [
+            {
+              "id": "cli-tools",
+              "title": "命令列工具",
+              "notes": [
+                {
+                  "id": "glab-gitlab-cli-overview",
+                  "title": "glab：GitLab 官方 CLI 工具的核心概念與使用方式",
+                  "file": "swe/04-delivery/glab-gitlab-cli-overview.mdx",
+                  "date": "2026-07-20",
+                  "tags": ["glab", "gitlab", "cli", "merge-request", "ci-cd", "gh", "devtools"]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
