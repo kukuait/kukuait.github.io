@@ -299,6 +299,19 @@
                   "tags": ["hallucination", "reliability", "rag", "grounding", "rlhf", "safety"]
                 }
               ]
+            },
+            {
+              "id": "content-provenance",
+              "title": "內容溯源與浮水印",
+              "notes": [
+                {
+                  "id": "what-is-synthid-image-watermark",
+                  "title": "SynthID：Gemini 生圖的數位浮水印機制",
+                  "file": "llm/05-evals-safety/what-is-synthid-image-watermark.mdx",
+                  "date": "2026-07-21",
+                  "tags": ["synthid", "watermark", "image-generation", "provenance", "deepfake", "c2pa", "responsible-ai", "gemini", "imagen"]
+                }
+              ]
             }
           ]
         },
