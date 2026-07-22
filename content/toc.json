@@ -436,6 +436,20 @@
                   "file": "swe/04-delivery/glab-gitlab-cli-overview.mdx",
                   "date": "2026-07-20",
                   "tags": ["glab", "gitlab", "cli", "merge-request", "ci-cd", "gh", "devtools"]
+                },
+                {
+                  "id": "angular-cli-overview",
+                  "title": "Angular CLI：Angular 專案的建置與開發命令列工具",
+                  "file": "swe/04-delivery/angular-cli-overview.mdx",
+                  "date": "2026-07-22",
+                  "tags": ["angular", "angular-cli", "cli", "scaffolding", "esbuild", "standalone-components", "schematics", "frontend"]
+                },
+                {
+                  "id": "fastapi-cli-and-crud-scaffolding",
+                  "title": "FastAPI 官方 CLI 與 CRUD 自動生成工具總覽",
+                  "file": "swe/04-delivery/fastapi-cli-and-crud-scaffolding.mdx",
+                  "date": "2026-07-22",
+                  "tags": ["fastapi", "cli", "crud", "scaffolding", "fastapi-crudrouter", "fastcrud", "copier", "sqlalchemy", "backend"]
                 }
               ]
             }
