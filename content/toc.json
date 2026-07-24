@@ -188,6 +188,13 @@
                   "file": "llm/04-applications/what-is-langgraph.mdx",
                   "date": "2026-07-17",
                   "tags": ["langgraph", "langchain", "agent", "state-machine", "multi-agent", "checkpointer", "human-in-the-loop", "orchestration"]
+                },
+                {
+                  "id": "evaluating-agent-over-execution",
+                  "title": "評估 LLM Agent 任務執行是否過度（Over-Execution）的方法",
+                  "file": "llm/04-applications/evaluating-agent-over-execution.mdx",
+                  "date": "2026-07-24",
+                  "tags": ["agent", "scope-creep", "over-execution", "evaluation", "blast-radius", "human-in-the-loop", "llm-as-judge", "reliability"]
                 }
               ]
             },
@@ -238,6 +245,19 @@
                   "tags": ["langchain", "structured-output", "pydantic", "tool-use", "json-mode", "framework"]
                 }
               ]
+            },
+            {
+              "id": "embedding-rag",
+              "title": "Embedding 與 RAG",
+              "notes": [
+                {
+                  "id": "how-to-choose-embedding-model",
+                  "title": "Embedding Model 的選型考量與評估方法",
+                  "file": "llm/04-applications/how-to-choose-embedding-model.mdx",
+                  "date": "2026-07-24",
+                  "tags": ["embedding", "rag", "retrieval", "mteb", "vector-database", "recall", "mrr", "semantic-search"]
+                }
+              ]
             }
           ]
         },
@@ -277,6 +297,13 @@
                   "file": "llm/05-evals-safety/eval-metrics-overview.mdx",
                   "date": "2026-07-07",
                   "tags": ["evaluation", "metrics", "bleu", "rouge", "bertscore", "exact-match", "pass-at-k", "perplexity", "win-rate", "llm-as-judge", "f1"]
+                },
+                {
+                  "id": "comparing-different-llms",
+                  "title": "如何有系統地比較不同 LLM 模型的差異",
+                  "file": "llm/05-evals-safety/comparing-different-llms.mdx",
+                  "date": "2026-07-24",
+                  "tags": ["model-comparison", "benchmark", "leaderboard", "evaluation", "cost", "latency", "llm-as-judge", "pareto-frontier"]
                 }
               ]
             },
