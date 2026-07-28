@@ -479,6 +479,19 @@
                   "tags": ["fastapi", "cli", "crud", "scaffolding", "fastapi-crudrouter", "fastcrud", "copier", "sqlalchemy", "backend"]
                 }
               ]
+            },
+            {
+              "id": "workflow-orchestration",
+              "title": "工作流程引擎",
+              "notes": [
+                {
+                  "id": "what-is-argo-workflow",
+                  "title": "Argo Workflow 的核心概念與架構",
+                  "file": "swe/04-delivery/what-is-argo-workflow.mdx",
+                  "date": "2026-07-28",
+                  "tags": ["argo-workflow", "kubernetes", "ci-cd", "dag", "workflow-engine", "orchestration", "cronworkflow", "artifact"]
+                }
+              ]
             }
           ]
         }
@@ -751,6 +764,13 @@
                   "file": "sre/05-gcp/gcp-pubsub-overview.mdx",
                   "date": "2026-07-16",
                   "tags": ["gcp", "pub-sub", "messaging", "event-driven", "pull", "push", "ordering-key", "exactly-once", "dead-letter-topic", "iam"]
+                },
+                {
+                  "id": "pubsub-push-vs-cloud-tasks",
+                  "title": "GCP Pub/Sub Push 訂閱與 Cloud Tasks 的核心差異",
+                  "file": "sre/05-gcp/pubsub-push-vs-cloud-tasks.mdx",
+                  "date": "2026-07-28",
+                  "tags": ["gcp", "pub-sub", "cloud-tasks", "messaging", "task-queue", "fan-out", "scheduling", "rate-limiting", "retry-policy"]
                 }
               ]
             }
