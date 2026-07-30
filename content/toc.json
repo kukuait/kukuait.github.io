@@ -579,6 +579,19 @@
                   "tags": ["product-analytics", "feature-usage", "posthog", "opentelemetry", "bigquery", "fastapi", "react", "gke", "google-oauth", "event-tracking", "funnel-analysis"]
                 }
               ]
+            },
+            {
+              "id": "log-management",
+              "title": "日誌管理與檢索",
+              "notes": [
+                {
+                  "id": "what-is-elk-stack",
+                  "title": "ELK Stack（Elasticsearch、Logstash、Kibana）的核心作用與架構",
+                  "file": "sre/02-observability/what-is-elk-stack.mdx",
+                  "date": "2026-07-30",
+                  "tags": ["elk", "elastic-stack", "elasticsearch", "logstash", "kibana", "log-management", "beats", "inverted-index", "alerting", "observability"]
+                }
+              ]
             }
           ]
         },
