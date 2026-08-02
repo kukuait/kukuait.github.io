@@ -343,6 +343,26 @@
           ]
         },
         {
+          "id": "07-strategy",
+          "title": "企業 AI 策略",
+          "description": "AI 導入的策略框架、產品與組織轉型、垂直領域落地",
+          "sections": [
+            {
+              "id": "strategy-frameworks",
+              "title": "策略框架",
+              "notes": [
+                {
+                  "id": "enterprise-ai-strategy-three-pillars",
+                  "title": "企業 AI 策略的三個層次：自主適應、AI 原生、深度領域",
+                  "file": "llm/07-strategy/enterprise-ai-strategy-three-pillars.mdx",
+                  "date": "2026-08-02",
+                  "tags": ["ai-strategy", "autonomous-agent", "ai-native", "domain-ai", "enterprise-ai", "agent", "rag", "fine-tuning"]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "id": "06-frontiers",
           "title": "前沿趨勢",
           "description": "MoE、multimodal、long context、reasoning models",
