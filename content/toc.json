@@ -256,6 +256,13 @@
                   "file": "llm/04-applications/how-to-choose-embedding-model.mdx",
                   "date": "2026-07-24",
                   "tags": ["embedding", "rag", "retrieval", "mteb", "vector-database", "recall", "mrr", "semantic-search"]
+                },
+                {
+                  "id": "agent-memory-vs-rag",
+                  "title": "Agent 檔案式記憶與 RAG 的異同",
+                  "file": "llm/04-applications/agent-memory-vs-rag.mdx",
+                  "date": "2026-08-03",
+                  "tags": ["memory", "rag", "embedding", "retrieval", "agent", "vector-database", "semantic-search", "heartbeat", "cron", "scheduling", "loop", "claude-md", "configuration"]
                 }
               ]
             }
