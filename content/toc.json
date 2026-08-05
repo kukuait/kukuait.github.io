@@ -172,6 +172,19 @@
               ]
             },
             {
+              "id": "context-engineering",
+              "title": "Context Engineering",
+              "notes": [
+                {
+                  "id": "rl-in-context-engineering",
+                  "title": "Context Engineering 中的 Reinforcement Learning",
+                  "file": "llm/04-applications/rl-in-context-engineering.mdx",
+                  "date": "2026-08-05",
+                  "tags": ["context-engineering", "reinforcement-learning", "agent", "reward-design", "multi-turn-rl", "memory", "compaction", "tool-use"]
+                }
+              ]
+            },
+            {
               "id": "agent",
               "title": "Agent 協作",
               "notes": [
