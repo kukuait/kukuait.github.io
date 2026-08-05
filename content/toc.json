@@ -335,6 +335,19 @@
               ]
             },
             {
+              "id": "calibration",
+              "title": "校準與不確定性",
+              "notes": [
+                {
+                  "id": "how-llm-provides-confidence-score",
+                  "title": "LLM 產生信心分數（Confidence Score）的方法與校準挑戰",
+                  "file": "llm/05-evals-safety/how-llm-provides-confidence-score.mdx",
+                  "date": "2026-08-05",
+                  "tags": ["confidence-score", "calibration", "logprobs", "perplexity", "self-consistency", "semantic-entropy", "p-true", "uncertainty", "hallucination", "rlhf"]
+                }
+              ]
+            },
+            {
               "id": "content-provenance",
               "title": "內容溯源與浮水印",
               "notes": [
@@ -811,6 +824,19 @@
                   "file": "sre/05-gcp/pubsub-push-vs-cloud-tasks.mdx",
                   "date": "2026-07-28",
                   "tags": ["gcp", "pub-sub", "cloud-tasks", "messaging", "task-queue", "fan-out", "scheduling", "rate-limiting", "retry-policy"]
+                }
+              ]
+            },
+            {
+              "id": "data-warehouse",
+              "title": "資料倉儲與分析",
+              "notes": [
+                {
+                  "id": "gcp-bigquery-overview",
+                  "title": "GCP BigQuery 核心功能與計費模式",
+                  "file": "sre/05-gcp/gcp-bigquery-overview.mdx",
+                  "date": "2026-08-05",
+                  "tags": ["gcp", "bigquery", "data-warehouse", "serverless", "pricing", "slots", "editions", "partitioning", "bigquery-ml", "bi-engine"]
                 }
               ]
             }
