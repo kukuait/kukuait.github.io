@@ -401,6 +401,19 @@
           "description": "MoE、multimodal、long context、reasoning models",
           "sections": [
             {
+              "id": "long-context",
+              "title": "Long Context 技術",
+              "notes": [
+                {
+                  "id": "what-are-recursive-language-models",
+                  "title": "Recursive Language Models（遞迴語言模型）的核心概念與運作原理",
+                  "file": "llm/06-frontiers/what-are-recursive-language-models.mdx",
+                  "date": "2026-08-06",
+                  "tags": ["recursive-language-model", "long-context", "context-rot", "context-window", "rag", "agent", "subagent", "context-engineering"]
+                }
+              ]
+            },
+            {
               "id": "multimodal",
               "title": "多模態",
               "notes": [
