@@ -41,13 +41,28 @@ $$
 
 直覺：「it」這個代名詞的新向量，會自動大量混入它所指涉名詞的資訊，因為模型學會了給那個名詞高權重。
 
-## Step 4：Multi-head 與 FFN
+**複雜度代價**：每個 token 都要對所有 token 算內積，序列長度 $n$ 的計算量與記憶體都是 $O(n^2 \cdot d)$。這正是「context window 越長、推理越貴」的根本原因，也是 KV cache（見〈[Context Window 與模型記憶容量](#/llm/01-foundations/what-is-context-window.mdx)〉）與各種 sparse / linear attention 變體要解決的問題。
+
+## Step 4：Multi-head、FFN 與一個完整 block 長什麼樣子
 
 - **Multi-head attention**：上述計算平行做 h 份（例如 32 個 head），每個 head 用不同的投影矩陣，學到不同種類的關聯（語法、指代、語意…），最後拼接起來。
 - **Feed-forward network(FFN)**:attention 之後，每個 token 各自通過一個兩層 MLP。一般理解是 attention 負責「token 之間搬運資訊」，FFN 負責「對每個 token 做知識加工」，模型大部分參數都在 FFN。
-- 每個子層都配 **residual connection + normalization**，讓幾十層堆疊起來仍然可以穩定訓練。
+- 每個子層都配 **residual connection + normalization**，讓幾十層堆疊起來仍然可以穩定訓練。現代 LLM 幾乎都採 **Pre-LN**（先 normalize 再進子層，而非原始論文的 Post-LN），因為 Pre-LN 讓深層（幾十到上百層）模型的梯度更穩定，訓練不易發散。
 
-一層「attention + FFN」就是一個 Transformer block，把它堆 N 層（GPT-3 是 96 層）就是完整模型。
+一層「attention + FFN」就是一個 Transformer block，把它堆 N 層（GPT-3 是 96 層）就是完整模型：
+
+```mermaid
+flowchart TD
+    X["輸入(來自上一層)"] --> N1["LayerNorm"]
+    N1 --> MHA["Multi-head<br/>Self-attention"]
+    MHA --> A1(("+"))
+    X --> A1
+    A1 --> N2["LayerNorm"]
+    N2 --> FFN["Feed-forward<br/>network"]
+    FFN --> A2(("+"))
+    A1 --> A2
+    A2 --> Y["輸出(送進下一層)"]
+```
 
 ## Step 5：LLM 實際怎麼用它生成文字
 

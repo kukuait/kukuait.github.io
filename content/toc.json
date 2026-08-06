@@ -58,8 +58,8 @@
                   "id": "what-is-transformer",
                   "title": "Transformer 架構與注意力機制",
                   "file": "llm/01-foundations/what-is-transformer.mdx",
-                  "date": "2026-07-06",
-                  "tags": ["transformer", "attention"]
+                  "date": "2026-08-06",
+                  "tags": ["transformer", "attention", "self-attention", "multi-head-attention", "feed-forward-network", "residual-connection", "layer-norm", "causal-mask", "decoder-only"]
                 }
               ]
             },
@@ -120,6 +120,19 @@
                   "file": "llm/03-inference/temperature-and-top-p.mdx",
                   "date": "2026-07-06",
                   "tags": ["temperature", "top-p", "top-k", "sampling", "nucleus-sampling", "inference"]
+                }
+              ]
+            },
+            {
+              "id": "decoding-strategies",
+              "title": "解碼策略",
+              "notes": [
+                {
+                  "id": "what-is-contrastive-decoding",
+                  "title": "Contrastive Decoding 的原理與應用",
+                  "file": "llm/03-inference/what-is-contrastive-decoding.mdx",
+                  "date": "2026-08-06",
+                  "tags": ["contrastive-decoding", "decoding", "expert-amateur", "plausibility-constraint", "degeneration", "inference", "speculative-decoding"]
                 }
               ]
             }
