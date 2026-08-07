@@ -525,7 +525,21 @@
           "id": "03-data-storage",
           "title": "資料與儲存",
           "description": "資料庫、索引、交易、cache、訊息佇列",
-          "sections": []
+          "sections": [
+            {
+              "id": "messaging",
+              "title": "訊息佇列與串流",
+              "notes": [
+                {
+                  "id": "what-is-nats",
+                  "title": "NATS 訊息系統的核心概念與架構",
+                  "file": "swe/03-data-storage/what-is-nats.mdx",
+                  "date": "2026-08-07",
+                  "tags": ["nats", "jetstream", "messaging", "pub-sub", "queue-group", "request-reply", "subject", "raft", "message-broker"]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "04-delivery",
