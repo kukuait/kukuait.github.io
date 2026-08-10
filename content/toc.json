@@ -221,6 +221,13 @@
                   "file": "llm/04-applications/evaluating-agent-over-execution.mdx",
                   "date": "2026-07-24",
                   "tags": ["agent", "scope-creep", "over-execution", "evaluation", "blast-radius", "human-in-the-loop", "llm-as-judge", "reliability"]
+                },
+                {
+                  "id": "building-agent-tool-permissions-gemini",
+                  "title": "建立 Agent 並設計 Tool 呼叫的權限管理：以 Gemini API 示範",
+                  "file": "llm/04-applications/building-agent-tool-permissions-gemini.mdx",
+                  "date": "2026-08-10",
+                  "tags": ["agent", "tool-use", "function-calling", "permission", "gemini", "risk-tiering", "human-in-the-loop", "denylist", "allowlist"]
                 }
               ]
             },
