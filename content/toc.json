@@ -228,6 +228,26 @@
                   "file": "llm/04-applications/building-agent-tool-permissions-gemini.mdx",
                   "date": "2026-08-10",
                   "tags": ["agent", "tool-use", "function-calling", "permission", "gemini", "risk-tiering", "human-in-the-loop", "denylist", "allowlist"]
+                },
+                {
+                  "id": "apify-mcp-overview",
+                  "title": "Apify MCP：把網頁爬蟲平台變成 Agent 可呼叫的工具",
+                  "file": "llm/04-applications/apify-mcp-overview.mdx",
+                  "date": "2026-08-11",
+                  "tags": ["apify", "mcp", "model-context-protocol", "agent", "tool-use", "web-scraping", "dynamic-tool-discovery", "actor"]
+                }
+              ]
+            },
+            {
+              "id": "agent-commerce",
+              "title": "Agent 商務與支付",
+              "notes": [
+                {
+                  "id": "ap2-vs-acp-vs-x402",
+                  "title": "AP2、ACP 與 x402：三個 Agent 支付協定的比較",
+                  "file": "llm/04-applications/ap2-vs-acp-vs-x402.mdx",
+                  "date": "2026-08-11",
+                  "tags": ["ap2", "acp", "x402", "agent-payments", "agentic-commerce", "mandate", "stablecoin", "http-402", "agent"]
                 }
               ]
             },
