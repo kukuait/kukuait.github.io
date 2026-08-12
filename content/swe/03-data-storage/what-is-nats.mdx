@@ -133,6 +133,56 @@ flowchart TB
 - JetStream 的 Stream 可設定 replica 數（通常 3），跟一般分散式共識系統一樣，多數節點（quorum）存活即可繼續服務。
 - 多個 cluster 之間可再組成 **super-cluster**，做跨地域（region）的訊息路由。
 
+## Step 9：Shard 與 Pub/Sub 的關係——NATS 沒有內建 Partition
+
+「Shard」在訊息系統的脈絡裡通常指的是 Kafka 的 **partition**：一個 topic 底層切成多個 partition，producer 依 key 雜湊決定訊息落在哪個 partition，同一個 partition 內訊息保證順序，consumer group 內每個 consumer 固定認養一組 partition，藉此把「順序保證」與「水平擴展」同時做到。
+
+NATS（不論 Core NATS 還是 JetStream）**沒有這種內建的 partition 機制**：
+
+- Core NATS 的 pub/sub 是純粹的 fan-out：訊息比對 subject 後投遞給所有匹配的訂閱者，沒有「這個 subject 屬於哪個 shard」的概念。
+- JetStream 的一個 Stream 只有一個 Raft leader 負責排序寫入，所有匹配該 Stream subject 的訊息共享同一條有序 log——這與 Kafka「一個 topic 多個 partition、各自獨立排序」不同，NATS 是「一個 Stream 一條全序 log」。
+- Cluster 裡的 replica（Step 8 提到的 Raft 複製）是**同一份資料的多個副本**，用來做高可用容錯，不是把資料切開分散負載——這常被誤解成「shard」，但語意完全不同：replica 是同步的相同資料，shard 是切開的不同資料。
+
+### 那 NATS 怎麼做到類似 sharding 的效果？
+
+兩種機制分別對應「不保證 per-key 順序的水平擴展」與「保證 per-key 順序的水平擴展」：
+
+1. **Queue Group——只做負載分攤，不保證 key 一致性**：多個 worker 加入同一個 queue group，Server 用近似 round-robin 的方式把每則訊息派給群組內一個成員。這確實達到「多個 worker 平行消化同一個 subject」的效果，但**同一個 key（例如同一個 user_id）的連續訊息可能被分派到不同 worker**，順序不被保證——這是它與 Kafka partition 最本質的差異：Kafka 用 key hash 決定 partition，保證同 key 訊息永遠落在同一個 partition、同一個 consumer；NATS queue group 沒有 key 的概念，純粹是「誰先喊到就給誰」。
+
+2. **應用層手動 sharding——把 shard key 編碼進 subject**：如果需要「同一個 key 的訊息保持順序，又要水平擴展」，做法是自己把 shard key 放進 subject hierarchy，讓每個 shard 各自是獨立的 Stream + Consumer：
+
+   ```
+   orders.shard-0.created
+   orders.shard-1.created
+   ...
+   orders.shard-15.created
+   ```
+
+   Publisher 端用 `hash(order_id) % 16` 算出 shard 編號組出 subject；每個 shard 各自綁一個 durable Consumer，固定由一個 worker 消費，worker 數等於 shard 數即可達到水平擴展，且**同一個 shard 內的訊息仍在同一條 Stream log 裡，順序被保留**。這跟 Kafka producer 用 key hash 選 partition 是同一個設計思路，只是 NATS 要求開發者在 subject 設計時就手動做這件事，而不是像 Kafka 由框架內建。
+
+```mermaid
+flowchart TB
+    P["Publisher<br/>hash(order_id) % 4"] -->|"orders.shard-0.*"| S0["Stream: shard-0"]
+    P -->|"orders.shard-1.*"| S1["Stream: shard-1"]
+    P -->|"orders.shard-2.*"| S2["Stream: shard-2"]
+    P -->|"orders.shard-3.*"| S3["Stream: shard-3"]
+    S0 --> W0["Worker 0<br/>(durable consumer)"]
+    S1 --> W1["Worker 1"]
+    S2 --> W2["Worker 2"]
+    S3 --> W3["Worker 3"]
+```
+
+### 與 GCP Pub/Sub、Kafka 的對照
+
+| 系統 | Shard/Partition 機制 | 保序範圍 |
+|------|----------------------|----------|
+| Kafka | Topic 內建多個 partition，producer 依 key hash 選 partition | 單一 partition 內保序 |
+| GCP Pub/Sub | 無內建 partition，用 **ordering key** 讓同 key 訊息依序投遞給同一個訂閱者（見 [GCP Pub/Sub 的架構與核心概念](#/sre/05-gcp/gcp-pubsub-overview.mdx)） | 同一 ordering key 內保序 |
+| NATS Core | 無 shard 概念，queue group 純負載分攤 | 不保證 |
+| NATS JetStream | 無內建 partition，須應用層把 shard key 編碼進 subject、拆成多個 Stream | 單一 Stream（＝手動切出的 shard）內保序 |
+
+**結論**：NATS 的 pub/sub 模型本身跟「shard」是兩件事——pub/sub 決定「訊息怎麼被匹配與投遞」，shard 是「資料／負載怎麼被切開分散」。NATS 把 sharding 的責任留給應用層的 subject 設計，這是它保持協定簡單、單一二進位檔的代價；Kafka 把 partition 內建進 topic 模型，換來的是更重的叢集架構（ZooKeeper／KRaft、partition rebalance）。
+
 ## 生產環境注意事項
 
 **選型判斷**：

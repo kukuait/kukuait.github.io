@@ -575,8 +575,8 @@
                   "id": "what-is-nats",
                   "title": "NATS 訊息系統的核心概念與架構",
                   "file": "swe/03-data-storage/what-is-nats.mdx",
-                  "date": "2026-08-07",
-                  "tags": ["nats", "jetstream", "messaging", "pub-sub", "queue-group", "request-reply", "subject", "raft", "message-broker"]
+                  "date": "2026-08-12",
+                  "tags": ["nats", "jetstream", "messaging", "pub-sub", "queue-group", "request-reply", "subject", "raft", "message-broker", "sharding", "partition", "ordering-key"]
                 }
               ]
             }
