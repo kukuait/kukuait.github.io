@@ -1,0 +1,86 @@
+# Claude 全系列與 OpenAI Codex 模型陣容對照：模型代號、定價與 Context Window（2026-08 快照）
+
+> 一句話版本：Claude 目前是一條清晰的世代線（Fable 5 / Opus 5 / Sonnet 5 / Haiku 4.5,皆維持 1M context、統一定價梯度）;OpenAI 這邊從 GPT-5.4 開始把「Codex 專用模型」與「主線 GPT 模型」合併成同一顆模型,但 Codex CLI 內的**實際可用 context 遠低於官方標示的視窗大小**,這是比較時最容易踩坑的地方。
+
+這份對照表是特定時間點的快照(定價、型號名稱在兩家都改得很快),重點放在**怎麼查、怎麼比**,不要當成長期不變的事實記住。方法論可參考 [如何有系統地比較不同 LLM 模型的差異](#/llm/05-evals-safety/comparing-different-llms.mdx),Codex 的 reasoning effort 設定細節可參考 [Codex 中的 Reasoning Effort(Thinking 程度)機制與實際影響](#/llm/06-frontiers/reasoning-effort-in-codex.mdx)。
+
+---
+
+## Step 1:Claude 目前所有可用 model
+
+| Model | Model ID | Context Window | Max Output | Input(每 M token) | Cached Input(約) | Output(每 M token) |
+|---|---|---|---|---|---|---|
+| Claude Fable 5 | `claude-fable-5` | 1M | 128K | \$10.00 | ~\$1.00 | \$50.00 |
+| Claude Mythos 5(僅 Project Glasswing) | `claude-mythos-5` | 1M | 128K | \$10.00 | ~\$1.00 | \$50.00 |
+| Claude Opus 5 | `claude-opus-5` | 1M | 128K | \$5.00 | ~\$0.50 | \$25.00 |
+| Claude Opus 4.8 | `claude-opus-4-8` | 1M | 128K | \$5.00 | ~\$0.50 | \$25.00 |
+| Claude Opus 4.7 | `claude-opus-4-7` | 1M | 128K | \$5.00 | ~\$0.50 | \$25.00 |
+| Claude Sonnet 5 | `claude-sonnet-5` | 1M | 128K | \$3.00(2026-08-31 前促銷 \$2.00) | ~\$0.30 | \$15.00(促銷 \$10.00) |
+| Claude Sonnet 4.6 | `claude-sonnet-4-6` | 1M | 128K | \$3.00 | ~\$0.30 | \$15.00 |
+| Claude Haiku 4.5 | `claude-haiku-4-5` | 200K | 64K | \$1.00 | ~\$0.10 | \$5.00 |
+
+幾個結構性特徵:
+
+- **Context window 全系列統一為 1M**(Haiku 4.5 除外,200K),沒有「進階模型 context 縮水」的情況。
+- Cached input 大約是 input 價格的 **10%**(cache read ≈ 0.1× base input price),但實際帳單機制是 cache write 另計(5 分鐘 TTL 約 1.25× input、1 小時 TTL 約 2×),表中只列穩定狀態下的讀取折扣。
+- 定價分層很乾淨:Opus 系列統一 \$5 / \$25,Sonnet 系列統一 \$3 / \$15,Fable / Mythos 是最高階、單價再往上一級。
+
+要拿到即時、不會過期的數字,用 Models API 查(不要只靠記憶或這篇筆記):
+
+```python
+m = client.models.retrieve("claude-opus-5")
+m.max_input_tokens, m.max_tokens
+```
+
+---
+
+## Step 2:OpenAI Codex 目前可選的 model
+
+Codex CLI(OpenAI 的編碼 agent)在 `~/.codex/config.toml` 用 `model = "..."` 選擇底層模型。重點轉折:**從 GPT-5.4 開始,OpenAI 把「Codex 專用模型」與「主線 GPT 模型」合併成同一顆**,不再區分 `gpt-5.x` 與 `gpt-5.x-codex` 兩條線。
+
+| Model | Model ID | 官方 Context Window | Codex CLI 內實際上限 | Max Output | Input(每 M token) | Cached Input | Output(每 M token) | Reasoning Effort |
+|---|---|---|---|---|---|---|---|---|
+| GPT-5-Codex | `gpt-5-codex` | 400K | 400K | 128K | \$1.25 | \$0.125 | \$10.00 | 支援 reasoning token,官方文件未列出具體檔位 |
+| GPT-5.1-Codex | `gpt-5.1-codex` | 400K | 400K | 128K | \$1.25 | \$0.125 | \$10.00 | 同上 |
+| GPT-5.2-Codex | `gpt-5.2-codex` | 400K | 400K | 128K | \$1.75 | \$0.175 | \$14.00 | low / medium / high / xhigh |
+| GPT-5.3-Codex(Codex 專用線最後一代) | `gpt-5.3-codex` | 400K | 400K | 128K | \$1.75 | \$0.175 | \$14.00 | low / medium / high / xhigh |
+| GPT-5.4(取代 codex 專用線,成為 Codex 內建預設) | `gpt-5.4` | 1.05M(官方標示) | **約 400K,超過 272K 部分計費 2× input / 1.5× output** | 128K | \$2.50 | \$0.25 | \$15.00 | minimal / low / medium / high(Codex config 曝露的檔位) |
+| GPT-5.5(目前 Codex 建議首選) | `gpt-5.5` | 1.05M(官方標示) | **實測約 258K 可用**,同樣有 272K 後的加價門檻 | 128K | \$5.00 | \$0.50 | \$30.00 | 同上 |
+
+**這張表裡最容易誤解的一格是「Context Window」**:GPT-5.4 / GPT-5.5 官方宣傳 1,050,000 token 的視窗,但 Codex CLI 為了控制長對話的延遲與成本,把可用視窗砍到約 400K(甚至實測回報 ~258K),超過 272K 的部分還會觸發 2 倍 input / 1.5 倍 output 的加價。也就是說,**同一顆模型在「裸 API 呼叫」與「Codex CLI 裡跑」的有效 context 是兩個數字**,比較時要講清楚你在比哪一種用法。
+
+Codex CLI 的 reasoning effort 檔位(`model_reasoning_effort` 設定 `minimal` / `low` / `medium` / `high`)跟模型本身在 API 層支援的檔位(部分模型到 `xhigh`)不完全一樣——CLI 目前曝露的是子集,細節見 [Codex 中的 Reasoning Effort(Thinking 程度)機制與實際影響](#/llm/06-frontiers/reasoning-effort-in-codex.mdx)。
+
+---
+
+## Step 3:兩邊放在一起比較
+
+| 維度 | Claude(Opus 5 / Sonnet 5 為代表) | OpenAI Codex(GPT-5.5 為代表) |
+|---|---|---|
+| 官方 context window | 1M,全系列一致 | 1.05M(裸 API),但 Codex CLI 內實際 ≈ 400K |
+| 長 context 加價 | 沒有額外門檻,1M 內同一價格 | 超過 272K token 的部分 2× input / 1.5× output |
+| Max output | 128K(Haiku 4.5 為 64K) | 128K,一致 |
+| 頂級模型定價(input / output) | Opus 5:\$5 / \$25;Fable 5:\$10 / \$50 | GPT-5.5:\$5 / \$30 |
+| Cached input 折扣 | ≈ 10%(read),write 另計 1.25×–2× | 固定 10%(如 \$1.25 → \$0.125) |
+| Reasoning 深度控制 | `output_config.effort`:low / medium / high / xhigh / max | `model_reasoning_effort`:minimal / low / medium / high(CLI 曝露的檔位) |
+| Thinking 過程可見度 | 預設不顯示(`display: "omitted"`),需手動設 `"summarized"` | `model_reasoning_summary` 控制(`none` / `concise` / `detailed` / `auto`) |
+
+價格數字表面上很接近(頂級模型都落在「\$5 input / \$25–\$30 output」這個量級),但 Claude 的定價是**跨整個 1M context 都一致**,而 Codex 這邊「官方視窗」與「實際可用視窗」有落差,且存在長 context 加價門檻——這才是實際使用成本會分岔的地方,不是表面單價。
+
+---
+
+## Step 4:這份快照的保鮮期
+
+兩家的型號命名與定價變動速度都很快(OpenAI 這邊三個月內就從 `-codex` 專用線切到 `gpt-5.4`/`gpt-5.5` 合併命名;Anthropic 這邊也持續在推出新世代)。用這篇筆記時:
+
+- **不要把表格內容當成長期事實背下來**,拿它當「知道去哪裡查、查什麼欄位」的骨架。
+- Claude 側查即時資料:用 Models API(`client.models.retrieve(...)` / `client.models.list()`)。
+- OpenAI 側查即時資料:OpenAI 官方 pricing 文件 + 各型號的 model 頁面(`developers.openai.com/api/docs/models/<model-id>`),以及 Codex CLI 自己的 `config.toml` / `/model` 選單,因為「Codex CLI 內實際上限」不一定等於「模型頁面標示的 context window」。
+
+---
+
+## 相關筆記
+
+- [Codex 中的 Reasoning Effort(Thinking 程度)機制與實際影響](#/llm/06-frontiers/reasoning-effort-in-codex.mdx)
+- [如何有系統地比較不同 LLM 模型的差異](#/llm/05-evals-safety/comparing-different-llms.mdx)
+- [Reasoning Model 與擴展思考能力](#/llm/06-frontiers/reasoning-models.mdx)
