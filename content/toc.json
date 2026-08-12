@@ -242,6 +242,20 @@
                   "file": "llm/04-applications/apify-mcp-overview.mdx",
                   "date": "2026-08-11",
                   "tags": ["apify", "mcp", "model-context-protocol", "agent", "tool-use", "web-scraping", "dynamic-tool-discovery", "actor"]
+                },
+                {
+                  "id": "what-is-a2ui",
+                  "title": "A2UI（Agent2UI）協定的核心概念與運作原理",
+                  "file": "llm/04-applications/what-is-a2ui.mdx",
+                  "date": "2026-08-12",
+                  "tags": ["a2ui", "a2a", "agent2agent", "agent", "mcp", "ui-protocol", "generative-ui", "google"]
+                },
+                {
+                  "id": "what-is-agent-standards-overview",
+                  "title": "除了 A2UI、AP2 之外的 Agent 相關標準總覽",
+                  "file": "llm/04-applications/what-is-agent-standards-overview.mdx",
+                  "date": "2026-08-12",
+                  "tags": ["agent", "mcp", "a2a", "acp", "anp", "agntcy", "oasf", "protocol", "standards"]
                 }
               ]
             },
