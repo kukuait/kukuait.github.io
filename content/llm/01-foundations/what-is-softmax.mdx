@@ -1,0 +1,83 @@
+# Softmax 函式的原理與應用
+
+> 一句話版本：softmax 是把任意實數向量（logits）轉換成合法機率分佈（非負、總和為 1）的函式，靠指數函式放大分數差距，是 LLM 中 attention 權重與下一個 token 機率分佈的共同數學基礎。
+
+## Step 1：要解決什麼問題
+
+模型內部算出來的原始分數（稱為 logits）是任意實數，可能是 `[2.1, -0.5, 3.8]` 這種東西——有正有負，大小沒有固定範圍。但最終想要的是「機率分佈」：每個值都在 0~1 之間，而且加總為 1，這樣才能拿來做決策（例如「選機率最高的類別」或「照機率抽樣」）。
+
+softmax 就是把任意實數向量，轉換成一個合法機率分佈的函式。
+
+## Step 2：公式
+
+$$
+\mathrm{softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{n} e^{z_j}}
+$$
+
+每個值先取自然指數 $e^{z_i}$（保證變成正數），再除以「所有項的指數總和」做正規化，讓結果加總等於 1。
+
+```python
+import math
+
+z = [2.1, -0.5, 3.8]
+exp_z = [math.exp(x) for x in z]        # [8.17, 0.61, 44.70]
+total = sum(exp_z)                       # 53.48
+probs = [x / total for x in exp_z]       # [0.153, 0.011, 0.836]
+```
+
+原本 `3.8` 只比 `2.1` 大一點點，經過 softmax 之後機率卻是 `0.836` vs `0.153`——差距被大幅放大。這正是用指數函式而不是單純線性正規化（除以總和）的原因：線性正規化沒有這種「贏者全拿」的放大效果。
+
+## Step 3：為什麼是指數函式
+
+三個關鍵性質：
+
+1. **保證非負**：$e^x > 0$ 對任何實數 $x$ 都成立，不需要額外處理負數 logits。
+2. **單調遞增且放大差距**：分數越高，指數放大的幅度越大，讓機率分佈更「尖銳」，等同於做出更有信心的決策。
+3. **處處可微分**：訓練神經網路要靠梯度下降，softmax 的導數形式乾淨（$\frac{\partial \mathrm{softmax}(z)_i}{\partial z_j} = \mathrm{softmax}(z)_i(\delta_{ij} - \mathrm{softmax}(z)_j)$），可以順利反向傳播。
+
+## Step 4：數值穩定性
+
+直接算 $e^{z_i}$ 在 $z_i$ 很大時會 overflow（例如 $e^{1000}$ 直接爆掉）。標準做法是先減去最大值再取指數：
+
+$$
+\mathrm{softmax}(z)_i = \frac{e^{z_i - \max(z)}}{\sum_{j} e^{z_j - \max(z)}}
+$$
+
+因為分子分母同時乘上 $e^{-\max(z)}$，數學上結果完全相同，但最大值那項變成 $e^0 = 1$，其餘項都小於等於 1，就不會 overflow。這是所有深度學習框架（PyTorch `F.softmax`、NumPy 手刻版）內部的標準實作方式。
+
+## Step 5：在 LLM 裡的兩個關鍵應用
+
+**應用一：Attention 權重**（見〈[Transformer 架構與注意力機制](#/llm/01-foundations/what-is-transformer.mdx)〉）
+
+$$
+\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V
+$$
+
+QK 內積算出每個 token 對其他 token 的原始相似度分數，softmax 把它轉成「總和為 1 的注意力權重」，才能拿來對 V 做加權平均。
+
+**應用二：輸出層的下一個 token 機率**
+
+模型最後一層輸出一個維度等於字典大小（可能幾萬到幾十萬）的 logits 向量，softmax 把它轉成「下一個 token 是誰」的機率分佈，取樣（或取 argmax）就決定了生成的字。
+
+## Step 6：跟 Temperature 的關係
+
+推理時常見的 temperature 參數，其實是在 softmax 前先把 logits 除以 $T$：
+
+$$
+\mathrm{softmax}(z/T)_i = \frac{e^{z_i/T}}{\sum_j e^{z_j/T}}
+$$
+
+- $T \to 0$：分佈趨近於 one-hot（只選最高分那個，等同 argmax）。
+- $T = 1$：原始分佈。
+- $T > 1$：分佈變平滑，各選項機率更接近，輸出更隨機、更有創意。
+
+細節可參考〈[Temperature 與 Top-p 的取樣策略](#/llm/03-inference/temperature-and-top-p.mdx)〉。
+
+## Step 7：訓練時的另一半——Cross-Entropy Loss
+
+分類任務訓練時，softmax 輸出的機率分佈會拿去跟真實標籤（one-hot）算 cross-entropy loss。這裡有個工程細節：PyTorch 的 `nn.CrossEntropyLoss` 內部已經包含 softmax（實際上用數值更穩定的 `log_softmax` + `NLLLoss`），呼叫它之前不該自己先做一次 softmax，否則等於做了兩次，會讓 loss 算錯。
+
+## 相關筆記
+
+- [Transformer 架構與注意力機制](#/llm/01-foundations/what-is-transformer.mdx) — softmax 在 self-attention 中的角色
+- [Temperature 與 Top-p 的取樣策略](#/llm/03-inference/temperature-and-top-p.mdx) — softmax 之後如何從機率分佈取樣出 token

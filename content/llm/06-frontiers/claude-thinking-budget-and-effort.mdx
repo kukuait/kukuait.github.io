@@ -1,0 +1,74 @@
+# Claude Extended Thinking 的 Token 限制與 Effort 設定建議
+
+> 一句話版本：舊機制用 `budget_tokens` 設定固定的思考 token 上限，但在 Claude 4.6 之後的模型上已被棄用甚至直接報錯;新機制改用 adaptive thinking 搭配 `effort` 等級（`low`～`max`）控制思考深度，且不建議無腦全部開到 `max`——多數 coding / agentic 任務的甜蜜點是 `xhigh`，其他場景應依複雜度分級並實測。
+
+## Step 1：舊機制——固定思考預算 `budget_tokens`
+
+只在較舊的模型（Sonnet 4.5、Haiku 4.5 或更早）上還可用：
+
+```python
+thinking = {"type": "enabled", "budget_tokens": 10000}
+```
+
+限制：
+
+- `budget_tokens` 必須嚴格小於 `max_tokens`，否則回傳 400 錯誤（思考用的 token 要留在輸出上限裡面）。
+- 最小值 1024。
+- 這是一個上限，不是「一定會用完」——模型可能提前結束思考，但不會超過這個數字。
+- 思考產生的 token 一樣要付費（跟一般輸出 token 同價），所以 `budget_tokens` 開多大，最壞情況下的成本上限就多高。
+
+在 Claude Opus 4.6 / Sonnet 4.6 上，`budget_tokens` 是過渡期的逃生艙（transitional escape hatch）：還能用，但官方標記為 deprecated；在 Claude Opus 5、Opus 4.7、Opus 4.8、Sonnet 5、Claude Fable 5 上直接送這個參數會回傳 400，完全不能用。
+
+## Step 2：新機制——Adaptive Thinking + Effort
+
+目前主流模型（Claude Opus 5、Sonnet 5、Opus 4.6/4.7/4.8、Sonnet 4.6、Claude Fable 5）改用完全不同的設計：
+
+```python
+thinking = {"type": "adaptive"}
+output_config = {"effort": "high"}  # low | medium | high | xhigh | max
+```
+
+- 不再由你自己指定 token 數字——`adaptive` 讓模型自己決定「這題該想多久」，`effort` 只是控制深度傾向，不是硬性 token 上限。
+- `effort` 共五個等級：`low`、`medium`、`high`、`xhigh`、`max`。`xhigh` 是 Opus 4.7 才新增的，介於 `high` 和 `max` 之間。
+- 思考的 token 一樣算在 `max_tokens` 裡面（思考 + 輸出文字共用同一個上限），`max_tokens` 設太小,在 `xhigh` 或 `max` 時可能思考到一半就被截斷,連答案都吐不出來。這是新機制下最常見的地雷。
+
+### 各模型「不設定 thinking」時的行為差異
+
+這是最容易踩雷的地方,把舊模型的程式碼原封不動搬到新模型,行為可能靜默改變：
+
+| 模型 | 不設定 `thinking` 時的預設行為 | `disabled` 是否可用 |
+|------|-------------------------------|----------------------|
+| Claude Opus 5 | 預設就會思考(自動跑 adaptive)——跟舊模型行為相反 | 只有 effort 在 `high` 以下才能關閉;搭配 `xhigh` 或 `max` 直接 400 |
+| Opus 4.8 / Opus 4.7、Sonnet 5、Sonnet 4.6 | 不會思考(要自己明確開 `adaptive`) | 可以關閉 |
+| Claude Fable 5 | 思考永遠開著,無法關閉 | `disabled` 一律 400,即使 effort 很低也一樣 |
+
+例如把 Opus 4.8 的程式碼搬到 Claude Opus 5：本來沒設 `thinking` 是「不思考」，換到 Opus 5 變成「自動思考」，如果 `max_tokens` 沒留夠餘裕，就會在輸出時被截斷（`stop_reason` 顯示為 max_tokens 已達上限）。
+
+## Step 3：該不該直接開到最高（`max`）？
+
+不建議無腦全部開 `max`，原因有三個：
+
+1. **報酬遞減,甚至反效果**：`max` 在某些任務上會出現 diminishing returns，甚至容易 overthinking——對簡單任務想太多，反而拖慢、也可能把簡單答案複雜化。
+2. **`xhigh` 才是 coding / agentic 任務的甜蜜點,不是 `max`**：Claude Code 本身預設用的就是 `xhigh`，官方建議多數 coding 和 agentic 場景用 `xhigh`，只有在正確性比成本重要時才用 `max`。
+3. **低 effort 在新模型上表現出乎意料地好**：在 Claude Opus 5 上，`low`／`medium` 在很多工作負載上能以極小的 token 和延遲代價換到很不錯的品質。固定沿用舊模型調過的 effort 設定，大概率不合適，需要重新測試。
+
+### 實務建議：按場景分級,而不是一律最高
+
+| 場景 | 建議起點 |
+|------|----------|
+| Coding / agentic（多步驟、長任務） | `xhigh`（多數情況的最佳點），正確性壓倒一切時才試 `max` |
+| 一般智能敏感型任務（分析、複雜推理） | 至少 `high` 起跳 |
+| 成本敏感但仍需要一定品質 | `medium`（在 Claude Opus 5 上常常已逼近舊模型 `high` 的水準） |
+| 短、範圍明確、延遲敏感（分類、簡單查詢） | `low` |
+
+正確做法是做一次 effort sweep：拿實際任務跑過 `low`／`medium`／`high`／`xhigh`／`max` 幾組，比較品質、延遲、token 花費，再依任務類型分別定 effort，而不是全站統一開到最高。這也是每一代新模型遷移時官方反覆強調的重點——effort 的合理預設值幾乎每一代都在變，舊的經驗不能直接套用到新模型。
+
+## 額外提醒
+
+- 想「看到」模型在想什麼，預設 `display` 是 `omitted`（思考欄位回傳空字串），要另外指定 `summarized` 才會拿到摘要版思考過程——但原始 chain of thought 在新模型上永遠不會回傳，即使明確要求也一樣。
+- Claude Fable 5 上思考永遠開著、不能關，所以它的限制完全交給 `effort` 去調節深度，沒有開關這個維度。
+
+## 相關筆記
+
+- [Reasoning Model 與擴展思考能力](#/llm/06-frontiers/reasoning-models.mdx) — reasoning model 的通用原理
+- [Codex 中的 Reasoning Effort（Thinking 程度）機制與實際影響](#/llm/06-frontiers/reasoning-effort-in-codex.mdx) — 另一家模型（OpenAI Codex）的對應機制，可對照比較

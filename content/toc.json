@@ -60,6 +60,13 @@
                   "file": "llm/01-foundations/what-is-transformer.mdx",
                   "date": "2026-08-06",
                   "tags": ["transformer", "attention", "self-attention", "multi-head-attention", "feed-forward-network", "residual-connection", "layer-norm", "causal-mask", "decoder-only"]
+                },
+                {
+                  "id": "what-is-softmax",
+                  "title": "Softmax 函式的原理與應用",
+                  "file": "llm/01-foundations/what-is-softmax.mdx",
+                  "date": "2026-08-12",
+                  "tags": ["softmax", "attention", "probability-distribution", "temperature", "cross-entropy", "numerical-stability"]
                 }
               ]
             },
@@ -497,6 +504,13 @@
                   "file": "llm/06-frontiers/reasoning-effort-in-codex.mdx",
                   "date": "2026-08-12",
                   "tags": ["reasoning-effort", "codex", "thinking", "extended-thinking", "reasoning-model", "latency", "cost", "reasoning-summary"]
+                },
+                {
+                  "id": "claude-thinking-budget-and-effort",
+                  "title": "Claude Extended Thinking 的 Token 限制與 Effort 設定建議",
+                  "file": "llm/06-frontiers/claude-thinking-budget-and-effort.mdx",
+                  "date": "2026-08-12",
+                  "tags": ["claude", "extended-thinking", "adaptive-thinking", "effort", "budget-tokens", "reasoning-effort", "thinking-budget", "anthropic-api"]
                 }
               ]
             }
