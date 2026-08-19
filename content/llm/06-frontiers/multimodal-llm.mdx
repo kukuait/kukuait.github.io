@@ -1,8 +1,21 @@
 # 多模態 LLM 與視覺資訊的整合
 
-> 多模態 LLM 透過 **Vision Encoder + Projection Layer** 把圖片轉成與文字相同維度的向量，讓 Transformer 以相同機制處理圖文混合輸入。
+> 多模態 LLM 的本質是「格式轉換」：把圖片、音訊等非文字資料轉成與文字 token 同一空間的向量（或離散 token），讓 Transformer 不需修改架構就能一起處理。主流做法是 **Vision Encoder + Projection Layer**；另一條路線是把各模態都離散化成 token，跟文字共用同一套詞表。
 
 ---
+
+## 兩種主流做法：連續向量 vs 離散 Token
+
+在深入 Vision Encoder 細節之前，先看多模態有兩條根本不同的技術路線：
+
+| | 做法 A：Projection（連續向量） | 做法 B：Tokenization（離散化） |
+|---|---|---|
+| 原理 | Vision Encoder + 線性投影，輸出連續向量直接接文字 embedding | 用 VQ-VAE 等方法把圖片量化成離散 token，跟文字共用詞表 |
+| 代表 | LLaVA、GPT-4V | 部分原生多模態生成模型（可輸出圖片 token） |
+| 能力 | 模型能「看懂」圖片，輸出仍是文字 | 模型能「看懂」也能「生成」圖片（解碼 token 回圖片） |
+| 代價 | 只需訓練一個線性層即可對齊 | 需額外訓練一個離散化的視覺 tokenizer |
+
+下面先展開做法 A（目前商用模型最常見）的細節。
 
 ## 核心問題：圖片怎麼變成 token？
 
@@ -65,9 +78,12 @@ Vision Encoder 輸出的維度與 LLM embedding 維度不同，用一個**線性
 
 ---
 
-## Gemini 的「原生多模態」有何不同？
+## Late Fusion vs Early Fusion：架構層次的差異
 
-大多數多模態 LLM 是「先訓練文字 LLM，再貼上視覺模組」的架構。Gemini 宣稱從訓練一開始就把圖文音頻交錯進行（interleaved pretraining），理論上視覺與語言理解更深度整合，而不是靠 projection layer 強行對齊。
+- **Late fusion**（LLaVA、多數商用模型）：文字 LLM 先訓練好，之後才「外掛」視覺模組，也就是前面說的 Vision Encoder + Projection Layer 做法。優點是能重用已經訓練好的強大文字模型，成本低、迭代快。
+- **Early / Native fusion**（Gemini 宣稱的做法）：從 pretraining 一開始就把圖文音訊交錯（interleaved）一起訓練，理論上模態之間融合更深，而不是訓練完文字模型後再靠 projection layer 強行對齊。
+
+大多數多模態 LLM 走的是 late fusion；Gemini 是少數宣稱走 early fusion 路線的代表模型。
 
 ---
 
