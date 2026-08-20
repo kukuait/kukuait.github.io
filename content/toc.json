@@ -332,6 +332,13 @@
               "title": "Embedding 與 RAG",
               "notes": [
                 {
+                  "id": "what-is-rag",
+                  "title": "RAG（Retrieval-Augmented Generation）的核心概念與運作原理",
+                  "file": "llm/04-applications/what-is-rag.mdx",
+                  "date": "2026-08-20",
+                  "tags": ["rag", "retrieval-augmented-generation", "embedding", "vector-database", "retrieval", "chunking", "reranking", "hybrid-search", "hallucination", "grounding"]
+                },
+                {
                   "id": "how-to-choose-embedding-model",
                   "title": "Embedding Model 的選型考量與評估方法",
                   "file": "llm/04-applications/how-to-choose-embedding-model.mdx",
