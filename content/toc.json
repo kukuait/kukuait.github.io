@@ -256,6 +256,13 @@
                   "file": "llm/04-applications/what-is-agent-standards-overview.mdx",
                   "date": "2026-08-12",
                   "tags": ["agent", "mcp", "a2a", "acp", "anp", "agntcy", "oasf", "protocol", "standards"]
+                },
+                {
+                  "id": "tool-selection-with-similar-tools",
+                  "title": "LLM 面對多個同性質 Tool 時的決策機制",
+                  "file": "llm/04-applications/tool-selection-with-similar-tools.mdx",
+                  "date": "2026-08-20",
+                  "tags": ["tool-use", "function-calling", "agent", "tool-selection", "mcp", "structured-output", "reasoning", "tool-overload", "business-decision", "guardrail", "risk-tiering", "human-in-the-loop", "memory", "dpo", "case-based-reasoning", "self-correction"]
                 }
               ]
             },

@@ -56,7 +56,55 @@ flowchart LR
 
 一個常見誤解：**微調不適合用來「灌新知識」**。少量微調資料很難可靠地寫入事實（還可能加劇幻覺），它擅長的是改變格式、語氣、任務行為；要讓模型「知道」你的內部資料，RAG 通常是更對的工具。
 
-## Step 4：LLM 要如何回答得更好？—— 兩條路
+## Step 4：SFT 與 RLHF 各自怎麼訓練
+
+這兩步合起來就是 base model 變成你實際在用的 chat model 的關鍵,原理不一樣,值得拆開看。
+
+### SFT（Supervised Fine-Tuning，監督式微調）
+
+做法跟預訓練幾乎一樣 —— 一樣是 next-token 預測、一樣是 cross-entropy loss —— 差別只在資料型態與 loss 計算範圍：
+
+- **資料**：人工（或用強模型輔助）寫成的「指令 → 理想回答」配對,例如 `(「幫我摘要這段文字」, 一段示範摘要)`。
+- **Loss**：只對「回答」的 token 算損失,「指令」部分只當作 context、不算 loss：
+
+  $$
+  \mathcal{L}_{\text{SFT}} = -\sum_{t \in \text{response}} \log P(x_t \mid x_{<t})
+  $$
+
+- **學到什麼**：模型從「接龍任何文字」收斂成「看到指令就照著指令的格式回答」——這一步決定了模型「聽不聽得懂人話」，但不保證回答「品質好不好」。
+
+### RLHF（Reinforcement Learning from Human Feedback）
+
+SFT 只教會模型「回答的形式」，RLHF 教的是「回答的好壞」，標準流程分三階段：
+
+```mermaid
+flowchart TD
+    A["SFT Model"] --> B["Stage 1:收集比較資料<br/>對同一個 prompt<br/>產生多個回答"]
+    B --> C["人類標註員<br/>對這些回答排序"]
+    C --> D["Stage 2:訓練 Reward Model<br/>學會預測人類偏好分數"]
+    D --> E["Stage 3:用 RL(PPO)<br/>微調 SFT Model<br/>最大化 Reward Model 分數"]
+    E --> F["RLHF 後的 Chat Model"]
+```
+
+1. **收集偏好資料**：同一個 prompt 讓模型產生多個候選回答，人類標註員排序（哪個比較好、比較無害、比較有幫助）。
+2. **訓練 reward model（RM）**：用 Bradley-Terry pairwise loss，讓 RM 學會對「較好的回答」給更高分：
+
+   $$
+   \mathcal{L}(\phi) = -\mathbb{E}_{(x, y_w, y_l)}\left[\log \sigma\big(r_\phi(x, y_w) - r_\phi(x, y_l)\big)\right]
+   $$
+
+   其中 $y_w$ 是人類偏好的回答、$y_l$ 是較差的回答。
+3. **用 RL 優化 policy（也就是 LLM 本身）**：把 RM 的分數當作 reward，用 PPO 這類演算法更新模型參數，同時加一個 KL 散度懲罰項，限制模型不要離 SFT model 太遠（避免為了拿高分而產生語意崩壞、鑽 reward model 漏洞的「reward hacking」）：
+
+   $$
+   \max_{\theta}\ \mathbb{E}_{x \sim D,\, y \sim \pi_\theta(y \mid x)}\big[r_\phi(x, y)\big] - \beta\, D_{KL}\big[\pi_\theta(y \mid x) \,\|\, \pi_{\text{ref}}(y \mid x)\big]
+   $$
+
+RLHF 流程複雜（要練 RM、要跑 RL、訓練不穩定），所以後來出現 **DPO（Direct Preference Optimization）**：跳過訓練獨立的 reward model 與 RL 迴圈，直接從「偏好對」($y_w$ 比 $y_l$ 好)推導出一個閉式的分類損失來更新模型，數學上等價於同一個目標，但工程上簡單、穩定得多，也是目前很多開源模型採用的做法。
+
+一句話總結兩者分工：**SFT 教模型「怎麼講」（格式、聽指令），RLHF/DPO 教模型「講得好不好」（品質、對齊人類偏好）**——兩者缺一，模型要嘛聽不懂指令，要嘛雖然聽得懂但回答空洞、不符合人類期待。
+
+## Step 5：LLM 要如何回答得更好？—— 兩條路
 
 ### 路線 A：訓練期（改變權重）
 
