@@ -872,8 +872,8 @@
                   "id": "gcp-vpc-network",
                   "title": "GCP VPC Network 的架構與核心概念",
                   "file": "sre/05-gcp/gcp-vpc-network.mdx",
-                  "date": "2026-07-09",
-                  "tags": ["gcp", "vpc", "subnet", "firewall-rules", "routes", "vpc-peering", "shared-vpc", "private-service-connect", "cloud-nat", "cloud-interconnect", "networking"]
+                  "date": "2026-08-31",
+                  "tags": ["gcp", "vpc", "subnet", "firewall-rules", "routes", "vpc-peering", "shared-vpc", "private-service-connect", "cloud-sql", "cloud-nat", "cloud-interconnect", "networking", "lan", "wan", "osi-model", "sdn", "broadcast-domain"]
                 }
               ]
             },
