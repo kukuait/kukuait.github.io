@@ -151,6 +151,50 @@ flowchart LR
 
 多個 VPC 要共用同一個 Cloud SQL instance 時，PSC 模式下每個 VPC 只需各自建一個 endpoint 指向同一個 instance，不像 Private Services Access 要對每個 VPC 重新走一次 peering 流程。唯一要注意的是：跨 region 存取 PSC endpoint 一樣要計入跨 region 延遲，因為底層流量還是要走 Google 骨幹網路——這跟本篇開頭「VPC 底層本質是 WAN」的推論是一致的。
 
+### 案例：GKE 上的 API 連線 Cloud SQL / AlloyDB
+
+回到最實務的場景：GKE cluster 裡跑的 API Pod 要連 Cloud SQL 或 AlloyDB，中間走的正是上面講的 VPC 機制，但兩種資料庫的預設連線方式不同，值得拆開看。
+
+**共同前提：GKE 必須是 VPC-native cluster。** 這對應到 Step 3 講的 secondary IP range——Pod 有自己的 alias IP（從 secondary range 分配），可以直接被 VPC 路由，不需要額外的 overlay network 或 NAT 轉換，這也是 Pod 能夠以「一般 VPC 內部主機」的身分去連資料庫的前提。
+
+**Cloud SQL：兩種連線路徑並存**
+
+| 方式 | 運作原理 | 適用情境 |
+|---|---|---|
+| **Cloud SQL Auth Proxy**（官方推薦） | 以 sidecar container 或 GKE 原生的 [Cloud SQL Proxy operator](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine) 跑在同一個 Pod 裡，用 IAM 身分驗證 + 自動 mTLS 加密建立連線，Pod 本身連 `localhost` 的固定 port 即可 | 免手動管理憑證、免處理 CIDR，是大多數團隊的預設選擇 |
+| **PSC / Private Services Access 直連** | Pod 直接連 Step 6 案例中提到的 PSC endpoint 內部 IP，或走舊式 Private Services Access peering | 需要更低的連線層延遲、或用資料庫原生的 TLS 憑證管理時 |
+
+Auth Proxy 的價值在於把「怎麼安全連到資料庫」這件事從網路層問題（CIDR、防火牆、憑證）搬到 IAM 層——Pod 只要有對應的 Workload Identity/service account 權限，Proxy 就會處理剩下的一切，這也是為什麼它是官方預設建議路徑，而不是直接叫應用程式去接 PSC endpoint。
+
+**AlloyDB：只走私有 IP，沒有走公網的選項**
+
+AlloyDB 的設計比 Cloud SQL 更嚴格：它**必須**透過 **Private Services Access**（peering 到 Google 管理的 VPC，機制同 Step 6 表格中的 Private Services Access）部署在你自己的 VPC 內，實例本身只有內部 IP，沒有公開 IP 這個選項。因此：
+
+- 部署 AlloyDB 前一定要先在目標 VPC 開通 Private Services Access（配置一段 CIDR range 給 Google 用），這一步做錯（CIDR 太小或跟既有 subnet 重疊）會直接卡死部署，呼應本篇 Step 2 提到的「CIDR 規劃要趁早」。
+- GKE Pod 連 AlloyDB 同樣可以用 **AlloyDB Auth Proxy**（跟 Cloud SQL Auth Proxy同概念，IAM 驗證 + 自動 TLS），或是 VPC 內部直連私有 IP。
+- 因為底層是 peering 而非 PSC，AlloyDB 的私有 IP 一旦跟你 VPC 的 CIDR 衝突，補救方式有限（peering 不支援 overlapping CIDR，同 Step 6 的限制）。
+
+```mermaid
+flowchart LR
+    subgraph GKE["GKE Cluster(VPC-native)"]
+        POD["API Pod"]
+        PROXY["Auth Proxy(sidecar)<br/>IAM 驗證 + mTLS"]
+        POD -->|"localhost:port"| PROXY
+    end
+    subgraph VPC["你的 VPC"]
+        PSCEP["PSC Endpoint<br/>(Cloud SQL)"]
+    end
+    subgraph GoogleNet["Google 管理的服務網路"]
+        SQL["Cloud SQL"]
+        ALLOY["AlloyDB<br/>(僅私有 IP,Private Services Access)"]
+    end
+    PROXY -->|"Cloud SQL Auth Proxy"| PSCEP -.->|PSC| SQL
+    PROXY -->|"AlloyDB Auth Proxy"| ALLOY
+    POD -.->|"或直連私有 IP(不經 Proxy)"| ALLOY
+```
+
+**給 SRE 的實務結論**：兩者共通的失敗模式都跟 CIDR 規劃有關——Cloud SQL 用 PSC 天生避開這個問題，AlloyDB 目前沒有這個選項，所以規劃引入 AlloyDB 的 VPC 時，務必提前確認 Private Services Access 的位址範圍夠用，且不能跟未來要接的其他 VPC/on-prem CIDR 衝突。連線層面則建議兩者都走 Auth Proxy sidecar，讓憑證輪替、加密、IAM 驗證都交給 Google 維護的元件處理，應用程式碼完全不用感知底層是 PSC 還是 peering。
+
 ## Step 7：對外連線
 
 - **Cloud NAT**：讓沒有外部 IP 的 VM 能對外發起連線（outbound-only），不像早期用單一 VM 當 NAT gateway 那樣有單點瓶頸，且不需要在防火牆開對內規則
