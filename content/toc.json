@@ -861,6 +861,13 @@
                   "file": "sre/05-gcp/otel-gcp-gke-case-study.mdx",
                   "date": "2026-07-09",
                   "tags": ["gcp", "gke", "opentelemetry", "otel", "cloud-trace", "cloud-logging", "cloud-monitoring", "managed-prometheus", "workload-identity", "trace-explorer", "logs-explorer", "metrics-explorer", "case-study"]
+                },
+                {
+                  "id": "gcp-managed-prometheus",
+                  "title": "Google Cloud Managed Service for Prometheus 的核心概念與架構",
+                  "file": "sre/05-gcp/gcp-managed-prometheus.mdx",
+                  "date": "2026-09-10",
+                  "tags": ["gcp", "managed-prometheus", "prometheus", "promql", "monarch", "gke", "podmonitoring", "grafana", "opentelemetry", "remote-write", "observability"]
                 }
               ]
             },
