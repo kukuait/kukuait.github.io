@@ -881,6 +881,13 @@
                   "file": "sre/05-gcp/gcp-vpc-network.mdx",
                   "date": "2026-08-31",
                   "tags": ["gcp", "vpc", "subnet", "firewall-rules", "routes", "vpc-peering", "shared-vpc", "private-service-connect", "cloud-sql", "cloud-nat", "cloud-interconnect", "networking", "lan", "wan", "osi-model", "sdn", "broadcast-domain"]
+                },
+                {
+                  "id": "gke-vm-same-vpc-network-cost",
+                  "title": "GKE Cluster 與 VM 之間的內網互通與資料傳輸費用",
+                  "file": "sre/05-gcp/gke-vm-same-vpc-network-cost.mdx",
+                  "date": "2026-10-13",
+                  "tags": ["gcp", "gke", "vpc", "subnet", "vm", "egress-cost", "inter-zone", "vpc-native", "alias-ip", "secondary-range", "firewall-rules", "networking"]
                 }
               ]
             },
