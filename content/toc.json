@@ -996,6 +996,26 @@
                   "tags": ["gcp", "bigquery", "data-warehouse", "serverless", "pricing", "slots", "editions", "partitioning", "bigquery-ml", "bi-engine"]
                 }
               ]
+            },
+            {
+              "id": "workspace-automation",
+              "title": "Workspace 自動化",
+              "notes": [
+                {
+                  "id": "google-apps-script-overview",
+                  "title": "Google Apps Script 的核心概念與運作原理",
+                  "file": "sre/05-gcp/google-apps-script-overview.mdx",
+                  "date": "2026-10-17",
+                  "tags": ["gcp", "apps-script", "google-workspace", "serverless", "javascript", "trigger", "web-app", "quota", "clasp", "automation"]
+                },
+                {
+                  "id": "apps-script-web-app",
+                  "title": "Google Apps Script Web App 的運作方式、應用場景與限制",
+                  "file": "sre/05-gcp/apps-script-web-app.mdx",
+                  "date": "2026-10-17",
+                  "tags": ["gcp", "apps-script", "web-app", "htmlservice", "contentservice", "google-script-run", "iframe-sandbox", "cors", "quota", "security"]
+                }
+              ]
             }
           ]
         },
