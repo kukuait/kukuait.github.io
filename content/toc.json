@@ -621,6 +621,19 @@
                   "tags": ["nats", "jetstream", "messaging", "pub-sub", "queue-group", "request-reply", "subject", "raft", "message-broker", "sharding", "partition", "ordering-key"]
                 }
               ]
+            },
+            {
+              "id": "search",
+              "title": "搜尋與向量檢索",
+              "notes": [
+                {
+                  "id": "what-is-vector-search-and-mongodb-hybrid-search",
+                  "title": "向量搜尋的原理，以及 MongoDB 與 AlloyDB 的 Hybrid Search 比較",
+                  "file": "swe/03-data-storage/what-is-vector-search-and-mongodb-hybrid-search.mdx",
+                  "date": "2026-10-19",
+                  "tags": ["vector-search", "embedding", "ann", "hnsw", "mongodb", "atlas-vector-search", "atlas-search", "hybrid-search", "rrf", "rankfusion", "bm25", "rag", "alloydb", "pgvector", "scann", "postgresql", "tsvector"]
+                }
+              ]
             }
           ]
         },
