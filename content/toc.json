@@ -570,6 +570,19 @@
               ]
             },
             {
+              "id": "transport-security",
+              "title": "傳輸安全",
+              "notes": [
+                {
+                  "id": "what-is-tls",
+                  "title": "TLS 的原理：加密、驗證與握手流程",
+                  "file": "swe/01-system-design/what-is-tls.mdx",
+                  "date": "2026-10-23",
+                  "tags": ["tls", "ssl", "https", "handshake", "x509", "certificate", "ecdhe", "forward-secrecy", "aead", "mtls", "sni", "tls-termination", "security"]
+                }
+              ]
+            },
+            {
               "id": "architecture-patterns",
               "title": "架構模式",
               "notes": [
@@ -901,6 +914,19 @@
                   "file": "sre/05-gcp/gke-vm-same-vpc-network-cost.mdx",
                   "date": "2026-10-13",
                   "tags": ["gcp", "gke", "vpc", "subnet", "vm", "egress-cost", "inter-zone", "vpc-native", "alias-ip", "secondary-range", "firewall-rules", "networking"]
+                }
+              ]
+            },
+            {
+              "id": "certificates",
+              "title": "憑證與 TLS",
+              "notes": [
+                {
+                  "id": "gcp-certificate-manager-overview",
+                  "title": "GCP Certificate Manager 的核心概念與功能",
+                  "file": "sre/05-gcp/gcp-certificate-manager-overview.mdx",
+                  "date": "2026-10-23",
+                  "tags": ["gcp", "certificate-manager", "tls", "ssl", "google-managed-certificate", "dns-authorization", "certificate-map", "sni", "wildcard", "private-ca", "mtls", "load-balancer"]
                 }
               ]
             },
