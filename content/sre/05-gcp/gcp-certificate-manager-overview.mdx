@@ -155,12 +155,70 @@ Terraform 對應的資源是 `google_certificate_manager_dns_authorization`、`g
 
 新專案若使用外部 Application Load Balancer，建議直接採用 Certificate Manager。
 
+## Step 10：Certificate Map 與 Gateway 的綁定數量
+
+Certificate map 是獨立資源，本身不記錄誰在使用它；綁定關係寫在使用方（target proxy，或 GKE Gateway 的 annotation）。因此兩個方向的基數不同：
+
+| 方向 | 可否 | 說明 |
+|------|------|------|
+| 一個 map 掛到多個 Gateway / target proxy | 可以 | 1 對多，多個 Gateway 的 annotation 可指向同一個 map |
+| 一個 Gateway / target proxy 掛多個 map | 不行 | 只能參照一個 map，annotation 或 `--certificate-map` 只接受單一值 |
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gw-a
+  annotations:
+    networking.gke.io/certmap: prod-cert-map   # 只能寫一個 map 名稱
+spec:
+  gatewayClassName: gke-l7-global-external-managed
+  listeners:
+  - name: https
+    protocol: HTTPS
+    port: 443
+```
+
+### 為什麼設計成單一 map
+
+Map 本身已經是「hostname → 憑證」的多對多對照表。一個 Gateway 需要服務多個網域時，做法是在同一個 map 裡加多個 entry，而不是掛多個 map。多個 map 還會讓 SNI 比對出現優先順序與衝突問題，所以平台直接限制為一個。
+
+### 需要多個 map 的內容時怎麼辦
+
+| 需求 | 做法 |
+|------|------|
+| 一個 Gateway 要服務多組網域 | 把所有 entry 合併進同一個 map |
+| 不同團隊或不同環境的憑證要隔離 | 各自建 map，各自掛在不同 Gateway |
+| 兩個 Gateway 要共用同一批網域 | 共用同一個 map，憑證只維護一份 |
+
+### 共用 map 的注意事項
+
+1. **Scope 要對得上**：global external Application Load Balancer 用 global map；regional LB 要用同 region 的 regional map。
+2. **同時影響所有使用方**：增刪 entry 或更換憑證，所有引用該 map 的 Gateway 會一起生效，blast radius 變大。prod 與 staging 不要共用。
+3. **與其他憑證設定互斥**：同一個 target proxy 若已設定 certificate map，就不要再混用傳統的 SSL certificates；GKE 上也請避免在同一個 Gateway 混用其他憑證來源。細節以官方文件為準。
+4. **PRIMARY entry 也是共用的**：沒有比對到 SNI 時的 fallback 憑證，所有使用方都會用到同一張。
+
+### 驗證指令
+
+```bash
+# map 內有哪些 entry
+gcloud certificate-manager maps entries list --map=prod-cert-map
+
+# 哪些 target proxy 引用了這個 map
+gcloud compute target-https-proxies list \
+  --format="table(name,certificateMap)"
+
+# Gateway 的 annotation
+kubectl get gateway -A -o yaml | grep -B2 -A2 certmap
+```
+
 ## 重點整理
 
 1. Certificate Manager 管理憑證的**生命週期**（申請、驗證、續期），certificate map 管理憑證**掛在哪裡**。
 2. 三種憑證：Google-managed、self-managed、Private CA 簽發；只有前者與 Private CA 簽發的會自動續期。
 3. **DNS authorization** 是關鍵：可事先取得憑證、支援萬用字元，因此是零停機遷移的首選。
 4. 要記得保留 CNAME、檢查 CAA record，並為憑證到期與簽發失敗設監控。
+5. 一個 certificate map 可以被多個 Gateway 共用，但一個 Gateway 只能參照一個 map；要服務多個網域就在 map 裡加 entry。
 
 ## 相關筆記
 
