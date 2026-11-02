@@ -351,6 +351,13 @@
                   "file": "llm/04-applications/agent-memory-vs-rag.mdx",
                   "date": "2026-08-03",
                   "tags": ["memory", "rag", "embedding", "retrieval", "agent", "vector-database", "semantic-search", "heartbeat", "cron", "scheduling", "loop", "claude-md", "configuration"]
+                },
+                {
+                  "id": "rrf-vs-rerank",
+                  "title": "RRF 與 Rerank 的差異：結果融合與重新排序",
+                  "file": "llm/04-applications/rrf-vs-rerank.mdx",
+                  "date": "2026-11-02",
+                  "tags": ["rrf", "reciprocal-rank-fusion", "rerank", "cross-encoder", "bi-encoder", "hybrid-search", "rag", "retrieval", "bm25"]
                 }
               ]
             }
