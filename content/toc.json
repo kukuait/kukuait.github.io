@@ -358,6 +358,13 @@
                   "file": "llm/04-applications/rrf-vs-rerank.mdx",
                   "date": "2026-11-02",
                   "tags": ["rrf", "reciprocal-rank-fusion", "rerank", "cross-encoder", "bi-encoder", "hybrid-search", "rag", "retrieval", "bm25"]
+                },
+                {
+                  "id": "how-llm-rerank-works",
+                  "title": "LLM Rerank 的實現方式：Cross-Encoder 與 LLM 的 Pointwise、Pairwise、Listwise 排序",
+                  "file": "llm/04-applications/how-llm-rerank-works.mdx",
+                  "date": "2026-11-05",
+                  "tags": ["rerank", "cross-encoder", "pointwise", "pairwise", "listwise", "rankgpt", "distillation", "rag", "retrieval"]
                 }
               ]
             }
